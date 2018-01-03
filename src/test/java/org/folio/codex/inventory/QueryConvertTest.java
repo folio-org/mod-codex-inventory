@@ -30,15 +30,17 @@ public class QueryConvertTest {
     assertEquals("(a) or (b)", conv("a or b"));
     assertEquals("(a) not (b)", conv("a not b"));
     assertEquals("((a) and (b)) and (c)", conv("a and b and c"));
-    assertEquals("contributor = x", conv("contributor = x"));
-    assertEquals("contributor == x", conv("contributor == x"));
-    assertEquals("identifier =/type = isbn 123", conv("identifier=/type=isbn 123"));
-    assertEquals("identifier =/type = isbn/other = x 123", conv("identifier=/type=isbn/other=x 123"));
-    assertEquals("identifier =/type = isbn/other 123", conv("identifier=/type=isbn/other 123"));
-    assertEquals("(identifier =/type = isbn/other = x 123) and (b)", conv("identifier=/type=isbn/other=x 123 and b"));
+    assertEquals("contributors = x", conv("contributor = x"));
+    assertEquals("contributors == x", conv("contributor == x"));
+    assertEquals("identifiers =/type = isbn 123", conv("identifier=/type=isbn 123"));
+    assertEquals("identifiers =/type = isbn/other = x 123", conv("identifier=/type=isbn/other=x 123"));
+    assertEquals("identifiers =/type = isbn/other 123", conv("identifier=/type=isbn/other 123"));
+    assertEquals("(identifiers =/type = isbn/other = x 123) and (b)", conv("identifier=/type=isbn/other=x 123 and b"));
     assertEquals("title = x sortby title", conv("title = x sortby title"));
     assertEquals("title = x sortby title/ascending", conv("title = x sortby title/ascending"));
-    assertEquals(">dc=\"info:srw/context-sets/1/dc-v1.1\" (dc.title any fish)",
-      conv("> dc = \"info:srw/context-sets/1/dc-v1.1\" dc.title any fish"));
+    assertEquals(">\"info:srw/context-sets/1/dc-v1.1\" (title any fish)",
+      conv("> \"info:srw/context-sets/1/dc-v1.1\" title any fish"));
+    assertEquals(">dc=\"info:srw/context-sets/1/dc-v1.1\" (title any fish)",
+      conv("> dc = \"info:srw/context-sets/1/dc-v1.1\" title any fish"));
   }
 }
