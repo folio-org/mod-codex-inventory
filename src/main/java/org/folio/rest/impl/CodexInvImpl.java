@@ -1,5 +1,7 @@
 package org.folio.rest.impl;
 
+import org.folio.codex.inventory.InstanceConvert;
+import org.folio.codex.inventory.LHeaders;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
@@ -11,6 +13,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.LinkedHashMap;
@@ -20,6 +23,9 @@ import org.folio.okapi.common.XOkapiHeaders;
 import org.folio.rest.jaxrs.model.Instance;
 import org.folio.rest.jaxrs.model.InstanceCollection;
 import org.folio.rest.jaxrs.resource.CodexInstancesResource;
+import org.z3950.zing.cql.CQLNode;
+import org.z3950.zing.cql.CQLParseException;
+import org.z3950.zing.cql.CQLParser;
 
 public class CodexInvImpl implements CodexInstancesResource {
 
@@ -152,9 +158,22 @@ public class CodexInvImpl implements CodexInstancesResource {
     int offset, int limit, LHeaders okapiHeaders, InstanceCollection col,
     Handler<AsyncResult<Void>> fut) {
 
+    logger.info("getByQuery query=" + query);
     HttpClient client = vertxContext.owner().createHttpClient();
     String url = okapiHeaders.get(XOkapiHeaders.URL) + "/instance-storage/instances?"
       + "offset=" + offset + "&limit=" + limit;
+
+    CQLParser parser = new CQLParser(CQLParser.V1POINT2);
+    try {
+      parser.parse(query);
+    } catch (CQLParseException ex) {
+      logger.warn("CQLParseException: " + ex.getMessage());
+      fut.handle(Future.failedFuture(ex));
+      return;
+    } catch (IOException ex) {
+      fut.handle(Future.failedFuture(ex));
+      return;
+    }
     try {
       if (query != null) {
         url += "&query=" + URLEncoder.encode(query, "UTF-8");
