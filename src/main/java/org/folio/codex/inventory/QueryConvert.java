@@ -20,9 +20,6 @@ public class QueryConvert {
 
   Logger logger = OkapiLogger.get();
 
-  public QueryConvert() {
-  }
-
   CQLNode trav(CQLNode vn1) {
     if (vn1 instanceof CQLBooleanNode) {
       CQLBooleanNode n1 = (CQLBooleanNode) vn1;
@@ -51,8 +48,7 @@ public class QueryConvert {
       return n2;
     } else if (vn1 instanceof CQLTermNode) {
       CQLTermNode n1 = (CQLTermNode) vn1;
-      CQLTermNode n2 = new CQLTermNode(n1.getIndex(), n1.getRelation(), n1.getTerm());
-      return n2;
+      return new CQLTermNode(n1.getIndex(), n1.getRelation(), n1.getTerm());
     } else if (vn1 instanceof CQLSortNode) {
       CQLSortNode n1 = (CQLSortNode) vn1;
       CQLSortNode n2 = new CQLSortNode(trav(n1.getSubtree()));
@@ -64,8 +60,7 @@ public class QueryConvert {
     } else if (vn1 instanceof CQLPrefixNode) {
       CQLPrefixNode n1 = (CQLPrefixNode) vn1;
       CQLPrefix prefix = n1.getPrefix();
-      CQLPrefixNode n2 = new CQLPrefixNode(prefix.getName(), prefix.getIdentifier(), trav(n1.getSubtree()));
-      return n2;
+      return new CQLPrefixNode(prefix.getName(), prefix.getIdentifier(), trav(n1.getSubtree()));
     } else {
       return vn1;
     }

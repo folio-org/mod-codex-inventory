@@ -121,7 +121,7 @@ public class InstanceConvert {
         throw (new IllegalArgumentException("instanceTypeId " + id + " does not exist"));
       }
 
-      Type t = Type.UNSPECIFIED;
+      Type t;
       switch (name) {
         case "Spoken Record":
           t = Type.AUDIO;
@@ -174,6 +174,8 @@ public class InstanceConvert {
         case "Web Resources":
           t = Type.WEBRESOURCES;
           break;
+        default:
+          t = Type.UNSPECIFIED;
       }
       instance.setType(t);
     }

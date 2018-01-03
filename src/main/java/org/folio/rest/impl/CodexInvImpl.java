@@ -164,9 +164,8 @@ public class CodexInvImpl implements CodexInstancesResource {
       + "offset=" + offset + "&limit=" + limit;
 
     CQLParser parser = new CQLParser(CQLParser.V1POINT2);
-    CQLNode top = null;
     try {
-      top = parser.parse(query);
+      parser.parse(query);
     } catch (CQLParseException ex) {
       logger.warn("CQLParseException: " + ex.getMessage());
       fut.handle(Future.failedFuture(ex));
