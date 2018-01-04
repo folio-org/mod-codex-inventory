@@ -1,5 +1,7 @@
 package org.folio.rest.impl;
 
+import org.folio.codex.inventory.InstanceConvert;
+import org.folio.codex.inventory.LHeaders;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
@@ -11,15 +13,24 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.ws.rs.core.Response;
+import org.folio.codex.inventory.IdMaps;
+import org.folio.codex.inventory.QueryConvert;
 import org.folio.okapi.common.XOkapiHeaders;
 import org.folio.rest.jaxrs.model.Instance;
 import org.folio.rest.jaxrs.model.InstanceCollection;
 import org.folio.rest.jaxrs.resource.CodexInstancesResource;
+import org.z3950.zing.cql.CQLNode;
+import org.z3950.zing.cql.CQLParseException;
+import org.z3950.zing.cql.CQLParser;
+import org.z3950.zing.cql.UnknownIndexException;
+import org.z3950.zing.cql.UnknownRelationException;
+import org.z3950.zing.cql.UnknownRelationModifierException;
 
 public class CodexInvImpl implements CodexInstancesResource {
 
@@ -57,10 +68,7 @@ public class CodexInvImpl implements CodexInstancesResource {
     req.end();
   }
 
-  static Map<String, String> contributorNameTypeIdMap = new LinkedHashMap<>();
-  static Map<String, String> instanceTypeMap = new LinkedHashMap<>();
-  static Map<String, String> instanceFormatMap = new LinkedHashMap<>();
-  static Map<String, String> identifierTypeMap = new LinkedHashMap<>();
+  static IdMaps idMaps = new IdMaps();
 
   private void getMap(Context vertxContext, LHeaders headers, Map<String, String> map,
     String path, String rootElement, Handler<AsyncResult<Void>> fut) {
@@ -106,8 +114,8 @@ public class CodexInvImpl implements CodexInstancesResource {
   }
 
   private void getMaps(Context context, LHeaders headers, Handler<AsyncResult<Void>> fut) {
-    if (contributorNameTypeIdMap.isEmpty()) {
-      getMap(context, headers, contributorNameTypeIdMap, "/contributor-name-types", "contributorNameTypes",
+    if (idMaps.contributorNameTypeIdMap.isEmpty()) {
+      getMap(context, headers, idMaps.contributorNameTypeIdMap, "/contributor-name-types", "contributorNameTypes",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);
@@ -115,8 +123,8 @@ public class CodexInvImpl implements CodexInstancesResource {
             fut.handle(Future.failedFuture(res.cause()));
           }
         });
-    } else if (instanceTypeMap.isEmpty()) {
-      getMap(context, headers, instanceTypeMap, "/instance-types", "instanceTypes",
+    } else if (idMaps.instanceTypeMap.isEmpty()) {
+      getMap(context, headers, idMaps.instanceTypeMap, "/instance-types", "instanceTypes",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);
@@ -124,8 +132,8 @@ public class CodexInvImpl implements CodexInstancesResource {
             fut.handle(Future.failedFuture(res.cause()));
           }
         });
-    } else if (instanceFormatMap.isEmpty()) {
-      getMap(context, headers, instanceFormatMap, "/instance-formats", "instanceFormats",
+    } else if (idMaps.instanceFormatMap.isEmpty()) {
+      getMap(context, headers, idMaps.instanceFormatMap, "/instance-formats", "instanceFormats",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);
@@ -133,8 +141,8 @@ public class CodexInvImpl implements CodexInstancesResource {
             fut.handle(Future.failedFuture(res.cause()));
           }
         });
-    } else if (identifierTypeMap.isEmpty()) {
-      getMap(context, headers, identifierTypeMap, "/identifier-types", "identifierTypes",
+    } else if (idMaps.identifierTypeMap.isEmpty()) {
+      getMap(context, headers, idMaps.identifierTypeMap, "/identifier-types", "identifierTypes",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);
@@ -152,16 +160,53 @@ public class CodexInvImpl implements CodexInstancesResource {
     int offset, int limit, LHeaders okapiHeaders, InstanceCollection col,
     Handler<AsyncResult<Void>> fut) {
 
+    logger.info("getByQuery query=" + query);
     HttpClient client = vertxContext.owner().createHttpClient();
     String url = okapiHeaders.get(XOkapiHeaders.URL) + "/instance-storage/instances?"
       + "offset=" + offset + "&limit=" + limit;
-    try {
-      if (query != null) {
-        url += "&query=" + URLEncoder.encode(query, "UTF-8");
+    if (query != null) {
+      CQLNode qn = null;
+      try {
+        CQLParser parser = new CQLParser(CQLParser.V1POINT2);
+        CQLNode top = parser.parse(query);
+        QueryConvert v = new QueryConvert(idMaps);
+        qn = v.convert(top);
+      } catch (CQLParseException ex) {
+        logger.warn("CQLParseException: " + ex.getMessage());
+        fut.handle(Future.failedFuture(ex));
+        return;
+      } catch (IOException ex) {
+        fut.handle(Future.failedFuture(ex));
+        return;
+      } catch (IllegalArgumentException ex) {
+        logger.warn("QueryConvert: " + ex.getMessage());
+        fut.handle(Future.failedFuture(ex));
+        return;
+      } catch (UnknownIndexException ex) {
+        logger.warn("Unknown index: " + ex.getMessage());
+        fut.handle(Future.failedFuture("Unknown index: " + ex.getMessage()));
+        return;
+      } catch (UnknownRelationModifierException ex) {
+        logger.warn("Unknown relation modifier: " + ex.getMessage());
+        fut.handle(Future.failedFuture("Unknown relation modifier: " + ex.getMessage()));
+        return;
+      } catch (UnknownRelationException ex) {
+        logger.warn("Unknown relation: " + ex.getMessage());
+        fut.handle(Future.failedFuture("Unknown relation: " + ex.getMessage()));
+        return;
       }
-    } catch (UnsupportedEncodingException ex) {
-      fut.handle(Future.failedFuture(ex.getMessage()));
-      return;
+      if (qn == null) { // not this source?
+        fut.handle(Future.succeededFuture());
+        return;
+      }
+      final String query2 = qn.toCQL();
+      logger.info("Resulting query = " + query2);
+      try {
+        url += "&query=" + URLEncoder.encode(query2, "UTF-8");
+      } catch (UnsupportedEncodingException ex) {
+        fut.handle(Future.failedFuture(ex.getMessage()));
+        return;
+      }
     }
     logger.info("getByQuery url=" + url);
     getUrl(url, client, okapiHeaders, res -> {
@@ -173,8 +218,7 @@ public class CodexInvImpl implements CodexInstancesResource {
         logger.info("getByQuery succeeded. Analyzing results");
         try {
           InstanceConvert.invToCollection(new JsonObject(b.toString()), col,
-            contributorNameTypeIdMap, instanceTypeMap,
-            instanceFormatMap, identifierTypeMap);
+            idMaps, "local");
         } catch (Exception e) {
           logger.warn(e);
           fut.handle(Future.failedFuture(e.getMessage()));
@@ -199,9 +243,7 @@ public class CodexInvImpl implements CodexInstancesResource {
         try {
           if (res.result().length() > 0) {
             JsonObject j = new JsonObject(res.result().toString());
-            InstanceConvert.invToCodex(j, instance,
-              contributorNameTypeIdMap, instanceTypeMap,
-              instanceFormatMap, identifierTypeMap);
+            InstanceConvert.invToCodex(j, instance, idMaps, "local");
           }
         } catch (Exception e) {
           logger.warn(e);

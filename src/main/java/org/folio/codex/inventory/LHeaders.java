@@ -1,4 +1,4 @@
-package org.folio.rest.impl;
+package org.folio.codex.inventory;
 
 import java.util.Map;
 import java.util.Map.Entry;
