@@ -4,6 +4,7 @@ buildMvn {
   publishModDescriptor = 'yes'
   publishAPI = 'no'
   mvnDeploy = 'yes'
+  sqBranch = ['sq']
 
   doDocker = {
     buildJavaDocker {
