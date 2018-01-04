@@ -21,27 +21,33 @@ H2=X-Okapi-Tenant:diku
 H3=X-Okapi-URL:$OKAPIURL
 
 # id
-#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=id%3De54b1f4d-7d05-4b1a-9368-3c36b75d8ac6'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=id%3De54b1f4d-7d05-4b1a-9368-3c36b75d8ac6'
+
 # title
-#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=title%3Dwater'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=title%3Dwater'
+
 # contributor
-#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=contributors="Sosa,+Omar"'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=contributor="Sosa,+Omar"'
+
 # publisher
-#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=publication%3D"Otá+Records,+"'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=publisher%3D"Otá+Records,+"'
+
 # identifier
-# curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifiers%3D"ocn968777846"'
-#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifiers%3D6316800312'
-curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifiers%3D"6316800312*"'
-# curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifiers%3D"OTA-1031+Otá+Records"'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier%3D"ocn968777846"'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier%3D6316800312'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier%3D"OTA-1031+Otá+Records"'
+# curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier%3D%3D"*\"value\":+\"ocn968777846\",+\"identifierTypeId\":+\"5d164f4b-0b15-4e42-ae75-cfcf85318ad9\"*"'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier%3D%2Ftype%3DISBN+"6316800312"'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier%3D%2Ftype%3Disbn+"6316800312"'
 
-# curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifiers%3D\"isbn\":\"6316800312\"'
-# curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifiers%3D6316800312*'
-#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifiers%3D6316800312'
+# resourceType
+#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=resourceType%3Dmusic+and+title%3Dwater'
+echo "KKKKKKKKKKKKKKKKKKKKKKKKK"
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=resourceType%3Dkits+and+title%3Dwater'
 
-curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=a+and('
+# curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=a+and('
 
-#sleep 1
-#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances'
+#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?limit=20'
 #sleep 1
 #curl -D- "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances/1234'
 #curl -D- "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances/106ce3b4-433a-406c-b584-e5a6242258f1'
