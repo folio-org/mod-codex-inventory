@@ -39,7 +39,7 @@ public class InstanceConvert {
     if (cnt == null) {
       throw (new IllegalArgumentException("totalRecords missing"));
     }
-    col.setTotalRecords(cnt);
+    col.getResultInfo().setTotalRecords(cnt);
   }
 
   public static void invToCodex(JsonObject j, Instance instance,

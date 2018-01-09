@@ -1,5 +1,6 @@
 package org.folio.rest.impl;
 
+import org.folio.codex.inventory.DiagnosticUtil;
 import org.folio.codex.inventory.InstanceConvert;
 import org.folio.codex.inventory.LHeaders;
 import io.vertx.core.AsyncResult;
@@ -16,7 +17,6 @@ import io.vertx.core.logging.LoggerFactory;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 import org.folio.codex.inventory.IdMaps;
@@ -24,6 +24,7 @@ import org.folio.codex.inventory.QueryConvert;
 import org.folio.okapi.common.XOkapiHeaders;
 import org.folio.rest.jaxrs.model.Instance;
 import org.folio.rest.jaxrs.model.InstanceCollection;
+import org.folio.rest.jaxrs.model.ResultInfo;
 import org.folio.rest.jaxrs.resource.CodexInstancesResource;
 import org.z3950.zing.cql.CQLNode;
 import org.z3950.zing.cql.CQLParseException;
@@ -171,31 +172,21 @@ public class CodexInvImpl implements CodexInstancesResource {
         CQLNode top = parser.parse(query);
         QueryConvert v = new QueryConvert(idMaps);
         qn = v.convert(top);
-      } catch (CQLParseException ex) {
-        logger.warn("CQLParseException: " + ex.getMessage());
-        fut.handle(Future.failedFuture(ex));
-        return;
       } catch (IOException ex) {
         fut.handle(Future.failedFuture(ex));
         return;
+      } catch (CQLParseException ex) {
+        DiagnosticUtil.add(col, "cql parse error", ex.getMessage());
       } catch (IllegalArgumentException ex) {
-        logger.warn("QueryConvert: " + ex.getMessage());
-        fut.handle(Future.failedFuture(ex));
-        return;
+        DiagnosticUtil.add(col, "cql", ex.getMessage());
       } catch (UnknownIndexException ex) {
-        logger.warn("Unknown index: " + ex.getMessage());
-        fut.handle(Future.failedFuture("Unknown index: " + ex.getMessage()));
-        return;
+        DiagnosticUtil.add(col, "unknown index", ex.getMessage());
       } catch (UnknownRelationModifierException ex) {
-        logger.warn("Unknown relation modifier: " + ex.getMessage());
-        fut.handle(Future.failedFuture("Unknown relation modifier: " + ex.getMessage()));
-        return;
+        DiagnosticUtil.add(col, "unknown relation modifier", ex.getMessage());
       } catch (UnknownRelationException ex) {
-        logger.warn("Unknown relation: " + ex.getMessage());
-        fut.handle(Future.failedFuture("Unknown relation: " + ex.getMessage()));
-        return;
+        DiagnosticUtil.add(col, "unknown relation", ex.getMessage());
       }
-      if (qn == null) { // not this source?
+      if (qn == null) { // not this source or diagnostic
         fut.handle(Future.succeededFuture());
         return;
       }
@@ -219,10 +210,8 @@ public class CodexInvImpl implements CodexInstancesResource {
         try {
           InstanceConvert.invToCollection(new JsonObject(b.toString()), col,
             idMaps, "local");
-        } catch (Exception e) {
-          logger.warn(e);
-          fut.handle(Future.failedFuture(e.getMessage()));
-          return;
+        } catch (Exception ex) {
+          DiagnosticUtil.add(col, "record conversion error", ex.getMessage());
         }
         fut.handle(Future.succeededFuture());
       }
@@ -269,6 +258,9 @@ public class CodexInvImpl implements CodexInstancesResource {
           CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res1.cause().getMessage())));
       } else {
         InstanceCollection col = new InstanceCollection();
+        ResultInfo resultInfo = new ResultInfo();
+        resultInfo.setTotalRecords(0);
+        col.setResultInfo(resultInfo);
         getByQuery(vertxContext, query, offset, limit, lHeaders, col, res2 -> {
           if (res2.failed()) {
             handler.handle(Future.succeededFuture(

@@ -41,11 +41,10 @@ curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier%3D%2Ftype%3Disbn+"6316800312"'
 
 # resourceType
-#curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=resourceType%3Dmusic+and+title%3Dwater'
-echo "KKKKKKKKKKKKKKKKKKKKKKKKK"
-curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=resourceType%3Dkits+and+title%3Dwater'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=resourceType%3Dmusic+and+title%3Dwater'
 
-# curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=a+and('
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=a+and('
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=abe%3D9'
 
 #curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?limit=20'
 #sleep 1
