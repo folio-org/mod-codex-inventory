@@ -1,3 +1,7 @@
+## 1.0.0 2018-01-09
+
+ * MODCXINV-8 implement resultInfo schema
+
 ## 0.0.3 2018-01-04
 
  * MODCXINV-7 Convert from Codex CQL to Inventory CQL
