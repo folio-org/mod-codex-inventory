@@ -1,6 +1,7 @@
 package org.folio.codex.inventory;
 
 import io.vertx.core.logging.Logger;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,28 +57,11 @@ public class QueryConvert {
     indexMaps.put("classification", new IndexDescriptor("classification", true));
   }
 
-  class TravRes {
-    CQLNode node;
-    boolean filter;
-    boolean regular;
-    String source;
-  }
-
-  TravRes trav(CQLNode vn1) throws UnknownRelationModifierException, UnknownRelationException, UnknownIndexException {
+  CQLNode trav(CQLNode vn1) throws UnknownRelationModifierException, UnknownRelationException, UnknownIndexException {
     if (vn1 instanceof CQLBooleanNode) {
-      TravRes res = new TravRes();
-
       CQLBooleanNode n1 = (CQLBooleanNode) vn1;
-      TravRes n2 = new TravRes();
-      TravRes left = trav(n1.getLeftOperand());
-      TravRes right = trav(n1.getRightOperand());
-      n2.filter = left.filter || right.filter;
-      n2.regular = left.regular || right.regular;
-      if (left.source != null) {
-        n2.source = left.source;
-      } else if (right.source != null) {
-        n2.source = right.source;
-      }
+      CQLNode left = trav(n1.getLeftOperand());
+      CQLNode right = trav(n1.getRightOperand());
       ModifierSet mSet = new ModifierSet(n1.getOperator().toString().toLowerCase());
       List<Modifier> mods = n1.getModifiers();
       for (Modifier m : mods) {
@@ -85,36 +69,17 @@ public class QueryConvert {
       }
       switch (n1.getOperator()) {
         case AND:
-          if (left.node == null) {
-            n2.node = right.node;
-          } else if (right.node == null) {
-            n2.node = left.node;
-          } else {
-            n2.node = new CQLAndNode(left.node, right.node, mSet);
-          }
-          break;
+          return new CQLAndNode(left, right, mSet);
         case OR:
-          if (n2.filter) {
-            throw new IllegalArgumentException("unsupported OR for filter");
-          }
-          n2.node = new CQLOrNode(left.node, right.node, mSet);
-          break;
+          return new CQLOrNode(left, right, mSet);
         case NOT:
-          if (n2.filter) {
-            throw new IllegalArgumentException("unsupported NOT for filter");
-          }
-          n2.node = new CQLNotNode(left.node, right.node, mSet);
-          break;
+          return new CQLNotNode(left, right, mSet);
         case PROX:
-          if (n2.filter) {
-            throw new IllegalArgumentException("unsupported PROX for filter");
-          }
-          n2.node = new CQLProxNode(left.node, right.node, mSet);
-          break;
+          return new CQLProxNode(left, right, mSet);
+        default:
+          throw new IllegalArgumentException("Unhandled CQLBooleanNode type in QueryConvert.trav");
       }
-      return n2;
     } else if (vn1 instanceof CQLTermNode) {
-      TravRes n2 = new TravRes();
       CQLTermNode n1 = (CQLTermNode) vn1;
       final String term1 = n1.getTerm();
       final String index1 = n1.getIndex();
@@ -124,14 +89,12 @@ public class QueryConvert {
       }
       final String index2 = des.name;
       CQLRelation rel = n1.getRelation();
-      n2.filter = des.filter;
-      if (n2.filter) {
+      if (des.filter) {
         if (!rel.getBase().equals("=")) {
           throw new UnknownRelationException(rel.getBase());
         }
       }
-      n2.regular = !des.filter;
-      n2.node = null;
+      CQLNode n2 = null;
       List<Modifier> mods = rel.getModifiers();
       if ("identifier".equals(index1) && !mods.isEmpty()) {
         logger.info("identifier BSON handling");
@@ -152,17 +115,17 @@ public class QueryConvert {
                 + ", " + sq + "identifierTypeId" + sq + ": " + sq + entry.getKey() + sq + "*";
               CQLRelation relEqEq = new CQLRelation("==");
               CQLTermNode n = new CQLTermNode(index2, relEqEq, bsonTerm);
-              if (n2.node == null) {
-                n2.node = n;
+              if (n2 == null) {
+                n2 = n;
               } else {
                 ModifierSet mSet = new ModifierSet("or");
-                n2.node = new CQLOrNode(n2.node, n, mSet);
+                n2 = new CQLOrNode(n2, n, mSet);
               }
             }
           }
         }
-        if (n2.node == null) {
-          n2.node = new CQLTermNode(index2, rel, "a");
+        if (n2 == null) {
+          n2 = new CQLTermNode(index2, rel, "a");
         }
       } else if ("resourceType".equals(index1)) {
         ResourceTypes rt = new ResourceTypes();
@@ -171,62 +134,62 @@ public class QueryConvert {
           for (Map.Entry<String, String> entry : idMaps.instanceTypeMap.entrySet()) {
             if (entry.getValue().equalsIgnoreCase(name)) {
               CQLTermNode n = new CQLTermNode("instanceTypeId", rel, entry.getKey());
-              if (n2.node == null) {
-                n2.node = n;
+              if (n2 == null) {
+                n2 = n;
               } else {
                 ModifierSet mSet = new ModifierSet("or");
-                n2.node = new CQLOrNode(n2.node, n, mSet);
+                n2 = new CQLOrNode(n2, n, mSet);
               }
             }
           }
         }
-        if (n2.node == null) {
-          n2.node = new CQLTermNode("instanceTypeId", rel, "a");
+        if (n2 == null) {
+          n2 = new CQLTermNode("instanceTypeId", rel, "a");
         }
-      } else if ("source".equals(index1)) {
-        n2.source = term1;
       } else {
         String suffix = "";
         if (term1.matches("^\\d+$")) {
           suffix = "*";
         }
-        n2.node = new CQLTermNode(index2, rel, term1 + suffix);
+        n2 = new CQLTermNode(index2, rel, term1 + suffix);
       }
       return n2;
     } else if (vn1 instanceof CQLSortNode) {
       CQLSortNode n1 = (CQLSortNode) vn1;
-      TravRes n2 = trav(n1.getSubtree());
-      CQLSortNode sn = new CQLSortNode(n2.node);
-      n2.node = sn;
+      CQLSortNode sn = new CQLSortNode(trav(n1.getSubtree()));
       List<ModifierSet> mods = n1.getSortIndexes();
       for (ModifierSet mSet : mods) {
         sn.addSortIndex(mSet);
       }
-      return n2;
+      return sn;
     } else if (vn1 instanceof CQLPrefixNode) {
       CQLPrefixNode n1 = (CQLPrefixNode) vn1;
-      TravRes n2 = trav(n1.getSubtree());
       CQLPrefix prefix = n1.getPrefix();
-      n2.node = new CQLPrefixNode(prefix.getName(), prefix.getIdentifier(), n2.node);
-      return n2;
+      return new CQLPrefixNode(prefix.getName(), prefix.getIdentifier(), n1.getSubtree());
     } else {
-      TravRes n2 = new TravRes();
-      n2.filter = false;
-      n2.regular = false;
-      n2.node = vn1;
-      return n2;
+      throw new IllegalArgumentException("Unhandled CQLNode type in QueryConvert.trav");
     }
   }
 
   public CQLNode convert(CQLNode top) throws UnknownRelationModifierException, UnknownRelationException, UnknownIndexException {
-    TravRes res = trav(top);
-    if (!res.regular) {
-      throw new IllegalArgumentException("missing non-filter field search");
-    }
-    if (res.source == null || "all".equals(res.source) || "local".equals(res.source)) {
-      return res.node;
-    } else {
+    CQLRelation rel = new CQLRelation("=");
+    Comparator<CQLTermNode> f1 = (CQLTermNode n1, CQLTermNode n2) -> {
+      if (n1.getIndex().equals(n2.getIndex()) && !n1.getTerm().equals(n2.getTerm())) {
+        return -1;
+      }
+      return 0;
+    };
+    Comparator<CQLTermNode> f2 = (CQLTermNode n1, CQLTermNode n2)
+      -> n1.getIndex().equals(n2.getIndex()) ? 0 : -1;
+
+    CQLTermNode source = new CQLTermNode("source", rel, "local");
+    if (!CQLUtil.eval(top, source, f1)) {
       return null;
     }
+    CQLNode n2 = CQLUtil.reducer(top, source, f2);
+    if (n2 == null) {
+      throw new IllegalArgumentException("query has source clause only");
+    }
+    return trav(n2);
   }
 }

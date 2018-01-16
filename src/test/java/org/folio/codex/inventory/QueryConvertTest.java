@@ -42,17 +42,18 @@ public class QueryConvertTest {
     assertEquals("(identifiers =/type = isbn a) and (b)", conv("identifier=/type=isbn 123 and b"));
     // filters
     assertEquals("(p) and (languages = dk)", conv("p and language=dk"));
-    assertEquals("Error: missing non-filter field search", conv("language=dk"));
-    assertEquals("Error: missing non-filter field search", conv("location=held and language=dk"));
-    assertEquals("Error: unsupported OR for filter", conv("location=held or language=dk"));
-    assertEquals("Error: unsupported NOT for filter", conv("location=held not language=dk"));
+    assertEquals("languages = dk", conv("language=dk"));
+    assertEquals("(location = held) and (languages = dk)", conv("location=held and language=dk"));
     assertEquals("((location = held) and (p)) and (languages = dk)", conv("location=held and p and language=dk"));
-    assertEquals("Error: missing non-filter field search", conv("source=kb"));
-    assertEquals("Error: missing non-filter field search", conv("source=all"));
+    assertEquals("Error: query has source clause only", conv("source=local"));
+    assertEquals("Error: null", conv("source=kb"));
+    assertEquals("Error: null", conv("source=all"));
     assertEquals("Error: null", conv("a and source=kb"));
-    assertEquals("a", conv("a and source=all"));
+    assertEquals("a", conv("a and source=local"));
     assertEquals("(a) and (b)", conv("a and (source=local) and b"));
-
+    assertEquals("title = a* sortby title", conv("(title=a*) and source=(kb or local) sortby title"));
+    assertEquals("title = a* sortby title", conv("(title=a*) and source=(1 or 2 or 3 or 4 or 5 or local) sortby title"));
+    assertEquals("Error: null", conv("(title=a*) and source=(1 or 2 or 3 or 4 or 5) sortby title"));
     // sorting
     assertEquals("title = x sortby title", conv("title = x sortby title"));
     assertEquals("title = x sortby title/ascending", conv("title = x sortby title/ascending"));
@@ -65,7 +66,7 @@ public class QueryConvertTest {
     assertEquals(">dc=\"info:srw/context-sets/1/dc-v1.1\" (title any fish)",
       conv("> dc = \"info:srw/context-sets/1/dc-v1.1\" title any fish"));
     assertEquals(">dc=\"info:srw/context-sets/1/dc-v1.1\" (title any fish)",
-      conv("> dc = \"info:srw/context-sets/1/dc-v1.1\" title any fish and source = all"));
+      conv("> dc = \"info:srw/context-sets/1/dc-v1.1\" title any fish and source = local"));
     assertEquals("Error: null",
       conv("> dc = \"info:srw/context-sets/1/dc-v1.1\" title any fish and source = kb"));
   }
