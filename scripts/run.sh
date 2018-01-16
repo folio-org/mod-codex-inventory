@@ -43,6 +43,10 @@ curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier
 # resourceType
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=resourceType%3Dmusic+and+title%3Dwater'
 
+# source
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=title%3Dwater+and+source%3Dlocal'
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=title%3Dwater+and+source%3Dother'
+
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=a+and('
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=abe%3D9'
 
