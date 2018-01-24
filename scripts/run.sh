@@ -43,6 +43,9 @@ curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=identifier
 # resourceType
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=resourceType%3Dmusic+and+title%3Dwater'
 
+# location
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=location%3D"Main+Library"'
+
 # source
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=title%3Dwater+and+source%3Dlocal'
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=title%3Dwater+and+source%3Dother'
@@ -54,5 +57,4 @@ curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=abe%3D9'
 #sleep 1
 #curl -D- "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances/1234'
 #curl -D- "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances/106ce3b4-433a-406c-b584-e5a6242258f1'
-
 kill -9 $PID

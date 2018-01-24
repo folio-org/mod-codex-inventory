@@ -50,7 +50,7 @@ public class QueryConvert {
     indexMaps.put("publisher", new IndexDescriptor("publication", false));
     indexMaps.put("subject", new IndexDescriptor("subject", false)); // TODO
     indexMaps.put("identifier", new IndexDescriptor("identifiers", false));
-    indexMaps.put("location", new IndexDescriptor("location", true)); // TODO
+    indexMaps.put("location", new IndexDescriptor("holdingsRecords.permanentLocationId", true));
     indexMaps.put("resourceType", new IndexDescriptor("resourceType", true));
     indexMaps.put("source", new IndexDescriptor("source", true));
     indexMaps.put("language", new IndexDescriptor("languages", true));
@@ -145,6 +145,23 @@ public class QueryConvert {
         }
         if (n2 == null) {
           n2 = new CQLTermNode("instanceTypeId", rel, "a");
+        }
+      } else if ("location".equals(index1)) {
+        ResourceTypes rt = new ResourceTypes();
+        String name = term1;
+        for (Map.Entry<String, String> entry : idMaps.shelfLocationMap.entrySet()) {
+          if (entry.getValue().equalsIgnoreCase(name)) {
+            CQLTermNode n = new CQLTermNode(index2, rel, entry.getKey());
+            if (n2 == null) {
+              n2 = n;
+            } else {
+              ModifierSet mSet = new ModifierSet("or");
+              n2 = new CQLOrNode(n2, n, mSet);
+            }
+          }
+        }
+        if (n2 == null) {
+          n2 = new CQLTermNode(index2, rel, "a");
         }
       } else {
         String suffix = "";

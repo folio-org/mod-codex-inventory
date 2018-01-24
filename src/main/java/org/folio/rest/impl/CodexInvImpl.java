@@ -151,6 +151,15 @@ public class CodexInvImpl implements CodexInstancesResource {
             fut.handle(Future.failedFuture(res.cause()));
           }
         });
+    } else if (idMaps.shelfLocationMap.isEmpty()) {
+      getMap(context, headers, idMaps.shelfLocationMap, "/shelf-locations", "shelflocations",
+        res -> {
+          if (res.succeeded()) {
+            getMaps(context, headers, fut);
+          } else {
+            fut.handle(Future.failedFuture(res.cause()));
+          }
+        });
     } else {
       logger.info("All maps fetched");
       fut.handle(Future.succeededFuture());
