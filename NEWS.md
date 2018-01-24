@@ -1,3 +1,9 @@
+## 1.0.1 2018-01-24
+
+ * MODCXINV-6 Report module on start
+ * MODCXINV-9 Support query: (title="a*") and source=("kb" or "local")
+ * MODCXINV-11 Fix search on location and subject
+
 ## 1.0.0 2018-01-09
 
  * MODCXINV-8 implement resultInfo schema
