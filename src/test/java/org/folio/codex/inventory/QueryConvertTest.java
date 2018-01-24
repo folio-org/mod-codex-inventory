@@ -43,8 +43,8 @@ public class QueryConvertTest {
     // filters
     assertEquals("(p) and (languages = dk)", conv("p and language=dk"));
     assertEquals("languages = dk", conv("language=dk"));
-    assertEquals("(location = held) and (languages = dk)", conv("location=held and language=dk"));
-    assertEquals("((location = held) and (p)) and (languages = dk)", conv("location=held and p and language=dk"));
+    assertEquals("(title = held) and (languages = dk)", conv("title=held and language=dk"));
+    assertEquals("((title = held) and (p)) and (languages = dk)", conv("title=held and p and language=dk"));
     assertEquals("Error: query has source clause only", conv("source=local"));
     assertEquals("Error: null", conv("source=kb"));
     assertEquals("Error: null", conv("source=all"));

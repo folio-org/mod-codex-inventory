@@ -48,10 +48,10 @@ public class QueryConvert {
     indexMaps.put("title", new IndexDescriptor("title", false));
     indexMaps.put("contributor", new IndexDescriptor("contributors", false));
     indexMaps.put("publisher", new IndexDescriptor("publication", false));
-    indexMaps.put("subject", new IndexDescriptor("subject", false)); // TODO
+    indexMaps.put("subject", new IndexDescriptor("subjects", false));
     indexMaps.put("identifier", new IndexDescriptor("identifiers", false));
-    indexMaps.put("location", new IndexDescriptor("location", true)); // TODO
-    indexMaps.put("resourceType", new IndexDescriptor("resourceType", true));
+    indexMaps.put("location", new IndexDescriptor("holdingsRecords.permanentLocationId", true));
+    indexMaps.put("resourceType", new IndexDescriptor("instanceTypeId", true));
     indexMaps.put("source", new IndexDescriptor("source", true));
     indexMaps.put("language", new IndexDescriptor("languages", true));
     indexMaps.put("classification", new IndexDescriptor("classification", true));
@@ -133,7 +133,7 @@ public class QueryConvert {
         for (String name : names) {
           for (Map.Entry<String, String> entry : idMaps.instanceTypeMap.entrySet()) {
             if (entry.getValue().equalsIgnoreCase(name)) {
-              CQLTermNode n = new CQLTermNode("instanceTypeId", rel, entry.getKey());
+              CQLTermNode n = new CQLTermNode(index2, rel, entry.getKey());
               if (n2 == null) {
                 n2 = n;
               } else {
@@ -144,7 +144,24 @@ public class QueryConvert {
           }
         }
         if (n2 == null) {
-          n2 = new CQLTermNode("instanceTypeId", rel, "a");
+          n2 = new CQLTermNode(index2, rel, "a");
+        }
+      } else if ("location".equals(index1)) {
+        ResourceTypes rt = new ResourceTypes();
+        String name = term1;
+        for (Map.Entry<String, String> entry : idMaps.shelfLocationMap.entrySet()) {
+          if (entry.getValue().equalsIgnoreCase(name)) {
+            CQLTermNode n = new CQLTermNode(index2, rel, entry.getKey());
+            if (n2 == null) {
+              n2 = n;
+            } else {
+              ModifierSet mSet = new ModifierSet("or");
+              n2 = new CQLOrNode(n2, n, mSet);
+            }
+          }
+        }
+        if (n2 == null) {
+          n2 = new CQLTermNode(index2, rel, "a");
         }
       } else {
         String suffix = "";

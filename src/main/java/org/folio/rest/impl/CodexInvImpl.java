@@ -87,7 +87,7 @@ public class CodexInvImpl implements CodexInstancesResource {
           JsonObject j = new JsonObject(res.result().toString());
           JsonArray a = j.getJsonArray(rootElement);
           if (a == null) {
-            fut.handle(Future.failedFuture("missing " + rootElement));
+            fut.handle(Future.failedFuture("missing " + rootElement + " got " + j.encodePrettily()));
             return;
           }
           logger.info(rootElement);
@@ -144,6 +144,15 @@ public class CodexInvImpl implements CodexInstancesResource {
         });
     } else if (idMaps.identifierTypeMap.isEmpty()) {
       getMap(context, headers, idMaps.identifierTypeMap, "/identifier-types", "identifierTypes",
+        res -> {
+          if (res.succeeded()) {
+            getMaps(context, headers, fut);
+          } else {
+            fut.handle(Future.failedFuture(res.cause()));
+          }
+        });
+    } else if (idMaps.shelfLocationMap.isEmpty()) {
+      getMap(context, headers, idMaps.shelfLocationMap, "/shelf-locations", "shelflocations",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);
