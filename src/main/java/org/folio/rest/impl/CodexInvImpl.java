@@ -87,7 +87,7 @@ public class CodexInvImpl implements CodexInstancesResource {
           JsonObject j = new JsonObject(res.result().toString());
           JsonArray a = j.getJsonArray(rootElement);
           if (a == null) {
-            fut.handle(Future.failedFuture("missing " + rootElement));
+            fut.handle(Future.failedFuture("missing " + rootElement + " got " + j.encodePrettily()));
             return;
           }
           logger.info(rootElement);
