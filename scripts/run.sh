@@ -46,6 +46,9 @@ curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=resourceTy
 # location
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=location%3D"Main+Library"'
 
+# subject
+curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=subject%3D"world+music"'
+
 # source
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=title%3Dwater+and+source%3Dlocal'
 curl "-H$H1" -H$H2 -H$H3 'http://localhost:8081/codex-instances?query=title%3Dwater+and+source%3Dother'
