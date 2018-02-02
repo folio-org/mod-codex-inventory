@@ -207,6 +207,11 @@ public class QueryConvert {
     if (n2 == null) {
       throw new IllegalArgumentException("query has source clause only");
     }
+    CQLTermNode extSelected = new CQLTermNode("ext.selected", rel, null);
+    n2 = CQLUtil.reducer(n2, extSelected, f2);
+    if (n2 == null) {
+      throw new IllegalArgumentException("query has ext.selected clause only");
+    }
     return trav(n2);
   }
 }
