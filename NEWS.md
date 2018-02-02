@@ -1,3 +1,7 @@
+## 1.0.2 2018-02-02
+
+ * MODCXINV-13 Ignore ext.selected
+
 ## 1.0.1 2018-01-24
 
  * MODCXINV-6 Report module on start
