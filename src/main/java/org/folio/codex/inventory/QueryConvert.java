@@ -23,6 +23,7 @@ import org.z3950.zing.cql.UnknownIndexException;
 import org.z3950.zing.cql.UnknownRelationException;
 import org.z3950.zing.cql.UnknownRelationModifierException;
 
+@java.lang.SuppressWarnings({"squid:S1192"})
 public class QueryConvert {
 
   Logger logger = OkapiLogger.get();
@@ -59,118 +60,9 @@ public class QueryConvert {
 
   CQLNode trav(CQLNode vn1) throws UnknownRelationModifierException, UnknownRelationException, UnknownIndexException {
     if (vn1 instanceof CQLBooleanNode) {
-      CQLBooleanNode n1 = (CQLBooleanNode) vn1;
-      CQLNode left = trav(n1.getLeftOperand());
-      CQLNode right = trav(n1.getRightOperand());
-      ModifierSet mSet = new ModifierSet(n1.getOperator().toString().toLowerCase());
-      List<Modifier> mods = n1.getModifiers();
-      for (Modifier m : mods) {
-        mSet.addModifier(m.getType(), m.getComparison(), m.getValue());
-      }
-      switch (n1.getOperator()) {
-        case AND:
-          return new CQLAndNode(left, right, mSet);
-        case OR:
-          return new CQLOrNode(left, right, mSet);
-        case NOT:
-          return new CQLNotNode(left, right, mSet);
-        case PROX:
-          return new CQLProxNode(left, right, mSet);
-        default:
-          throw new IllegalArgumentException("Unhandled CQLBooleanNode type in QueryConvert.trav");
-      }
+      return travBoolean((CQLBooleanNode) vn1);
     } else if (vn1 instanceof CQLTermNode) {
-      CQLTermNode n1 = (CQLTermNode) vn1;
-      final String term1 = n1.getTerm();
-      final String index1 = n1.getIndex();
-      IndexDescriptor des = indexMaps.get(index1);
-      if (des == null) {
-        throw new UnknownIndexException(index1);
-      }
-      final String index2 = des.name;
-      CQLRelation rel = n1.getRelation();
-      if (des.filter) {
-        if (!rel.getBase().equals("=")) {
-          throw new UnknownRelationException(rel.getBase());
-        }
-      }
-      CQLNode n2 = null;
-      List<Modifier> mods = rel.getModifiers();
-      if ("identifier".equals(index1) && !mods.isEmpty()) {
-        logger.info("identifier BSON handling");
-        for (Modifier mod : mods) {
-          if (mod.getValue() == null || mod.getComparison() == null) {
-            throw new UnknownRelationModifierException("missing relation and/or value");
-          }
-          if (!"=".equals(mod.getComparison())) {
-            throw new UnknownRelationException(mod.getComparison());
-          }
-          if (!"type".equals(mod.getType())) {
-            throw new UnknownRelationModifierException(mod.getType());
-          }
-          for (Map.Entry<String, String> entry : idMaps.identifierTypeMap.entrySet()) {
-            if (mod.getValue().equalsIgnoreCase(entry.getValue())) {
-              final String sq = "\"";
-              final String bsonTerm = "*" + sq + "value" + sq + ": " + sq + term1 + sq
-                + ", " + sq + "identifierTypeId" + sq + ": " + sq + entry.getKey() + sq + "*";
-              CQLRelation relEqEq = new CQLRelation("==");
-              CQLTermNode n = new CQLTermNode(index2, relEqEq, bsonTerm);
-              if (n2 == null) {
-                n2 = n;
-              } else {
-                ModifierSet mSet = new ModifierSet("or");
-                n2 = new CQLOrNode(n2, n, mSet);
-              }
-            }
-          }
-        }
-        if (n2 == null) {
-          n2 = new CQLTermNode(index2, rel, "a");
-        }
-      } else if ("resourceType".equals(index1)) {
-        ResourceTypes rt = new ResourceTypes();
-        List<String> names = rt.toInvName(term1);
-        for (String name : names) {
-          for (Map.Entry<String, String> entry : idMaps.instanceTypeMap.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase(name)) {
-              CQLTermNode n = new CQLTermNode(index2, rel, entry.getKey());
-              if (n2 == null) {
-                n2 = n;
-              } else {
-                ModifierSet mSet = new ModifierSet("or");
-                n2 = new CQLOrNode(n2, n, mSet);
-              }
-            }
-          }
-        }
-        if (n2 == null) {
-          n2 = new CQLTermNode(index2, rel, "a");
-        }
-      } else if ("location".equals(index1)) {
-        ResourceTypes rt = new ResourceTypes();
-        String name = term1;
-        for (Map.Entry<String, String> entry : idMaps.shelfLocationMap.entrySet()) {
-          if (entry.getValue().equalsIgnoreCase(name)) {
-            CQLTermNode n = new CQLTermNode(index2, rel, entry.getKey());
-            if (n2 == null) {
-              n2 = n;
-            } else {
-              ModifierSet mSet = new ModifierSet("or");
-              n2 = new CQLOrNode(n2, n, mSet);
-            }
-          }
-        }
-        if (n2 == null) {
-          n2 = new CQLTermNode(index2, rel, "a");
-        }
-      } else {
-        String suffix = "";
-        if (term1.matches("^\\d+$")) {
-          suffix = "*";
-        }
-        n2 = new CQLTermNode(index2, rel, term1 + suffix);
-      }
-      return n2;
+      return travTerm((CQLTermNode) vn1);
     } else if (vn1 instanceof CQLSortNode) {
       CQLSortNode n1 = (CQLSortNode) vn1;
       CQLSortNode sn = new CQLSortNode(trav(n1.getSubtree()));
@@ -185,6 +77,132 @@ public class QueryConvert {
       return new CQLPrefixNode(prefix.getName(), prefix.getIdentifier(), n1.getSubtree());
     } else {
       throw new IllegalArgumentException("Unhandled CQLNode type in QueryConvert.trav");
+    }
+  }
+
+  private CQLNode travTerm(CQLTermNode n1) throws UnknownRelationException, UnknownRelationModifierException, UnknownIndexException {
+    final String term1 = n1.getTerm();
+    final String index1 = n1.getIndex();
+    IndexDescriptor des = indexMaps.get(index1);
+    if (des == null) {
+      throw new UnknownIndexException(index1);
+    }
+    final String index2 = des.name;
+    CQLRelation rel = n1.getRelation();
+    if (des.filter && !rel.getBase().equals("=")) {
+      throw new UnknownRelationException(rel.getBase());
+    }
+    CQLNode n2 = null;
+    List<Modifier> mods = rel.getModifiers();
+    if ("identifier".equals(index1) && !mods.isEmpty()) {
+      n2 = travIdentifier(mods, term1, index2, n2, rel);
+    } else if ("resourceType".equals(index1)) {
+      n2 = travResourceType(term1, index2, rel, n2);
+    } else if ("location".equals(index1)) {
+      n2 = travLocation(term1, index2, rel, n2);
+    } else {
+      String suffix = "";
+      if (term1.matches("^\\d+$")) {
+        suffix = "*";
+      }
+      n2 = new CQLTermNode(index2, rel, term1 + suffix);
+    }
+    return n2;
+  }
+
+  private CQLNode travLocation(final String term1, final String index2, CQLRelation rel, CQLNode n2) {
+    String name = term1;
+    for (Map.Entry<String, String> entry : idMaps.shelfLocationMap.entrySet()) {
+      if (entry.getValue().equalsIgnoreCase(name)) {
+        CQLTermNode n = new CQLTermNode(index2, rel, entry.getKey());
+        if (n2 == null) {
+          n2 = n;
+        } else {
+          ModifierSet mSet = new ModifierSet("or");
+          n2 = new CQLOrNode(n2, n, mSet);
+        }
+      }
+    }
+    if (n2 == null) {
+      n2 = new CQLTermNode(index2, rel, "a");
+    }
+    return n2;
+  }
+
+  private CQLNode travResourceType(final String term1, final String index2, CQLRelation rel, CQLNode n2) {
+    ResourceTypes rt = new ResourceTypes();
+    List<String> names = rt.toInvName(term1);
+    for (String name : names) {
+      for (Map.Entry<String, String> entry : idMaps.instanceTypeMap.entrySet()) {
+        if (entry.getValue().equalsIgnoreCase(name)) {
+          CQLTermNode n = new CQLTermNode(index2, rel, entry.getKey());
+          if (n2 == null) {
+            n2 = n;
+          } else {
+            ModifierSet mSet = new ModifierSet("or");
+            n2 = new CQLOrNode(n2, n, mSet);
+          }
+        }
+      }
+    }
+    if (n2 == null) {
+      n2 = new CQLTermNode(index2, rel, "a");
+    }
+    return n2;
+  }
+
+  private CQLNode travIdentifier(List<Modifier> mods, final String term1, final String index2, CQLNode n2, CQLRelation rel) throws UnknownRelationModifierException, UnknownRelationException {
+    for (Modifier mod : mods) {
+      if (mod.getValue() == null || mod.getComparison() == null) {
+        throw new UnknownRelationModifierException("missing relation and/or value");
+      }
+      if (!"=".equals(mod.getComparison())) {
+        throw new UnknownRelationException(mod.getComparison());
+      }
+      if (!"type".equals(mod.getType())) {
+        throw new UnknownRelationModifierException(mod.getType());
+      }
+      for (Map.Entry<String, String> entry : idMaps.identifierTypeMap.entrySet()) {
+        if (mod.getValue().equalsIgnoreCase(entry.getValue())) {
+          final String sq = "\"";
+          final String bsonTerm = "*" + sq + "value" + sq + ": " + sq + term1 + sq
+            + ", " + sq + "identifierTypeId" + sq + ": " + sq + entry.getKey() + sq + "*";
+          CQLRelation relEqEq = new CQLRelation("==");
+          CQLTermNode n = new CQLTermNode(index2, relEqEq, bsonTerm);
+          if (n2 == null) {
+            n2 = n;
+          } else {
+            ModifierSet mSet = new ModifierSet("or");
+            n2 = new CQLOrNode(n2, n, mSet);
+          }
+        }
+      }
+    }
+    if (n2 == null) {
+      n2 = new CQLTermNode(index2, rel, "a");
+    }
+    return n2;
+  }
+
+  private CQLNode travBoolean(CQLBooleanNode n1) throws UnknownIndexException, UnknownRelationModifierException, UnknownRelationException, IllegalArgumentException {
+    CQLNode left = trav(n1.getLeftOperand());
+    CQLNode right = trav(n1.getRightOperand());
+    ModifierSet mSet = new ModifierSet(n1.getOperator().toString().toLowerCase());
+    List<Modifier> mods = n1.getModifiers();
+    for (Modifier m : mods) {
+      mSet.addModifier(m.getType(), m.getComparison(), m.getValue());
+    }
+    switch (n1.getOperator()) {
+      case AND:
+        return new CQLAndNode(left, right, mSet);
+      case OR:
+        return new CQLOrNode(left, right, mSet);
+      case NOT:
+        return new CQLNotNode(left, right, mSet);
+      case PROX:
+        return new CQLProxNode(left, right, mSet);
+      default:
+        throw new IllegalArgumentException("Unhandled CQLBooleanNode type in QueryConvert.trav");
     }
   }
 
