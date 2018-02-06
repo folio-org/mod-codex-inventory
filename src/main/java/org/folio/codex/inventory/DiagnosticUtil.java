@@ -8,6 +8,9 @@ import org.folio.rest.jaxrs.model.ResultInfo;
 import org.folio.rest.jaxrs.model.InstanceCollection;
 
 public class DiagnosticUtil {
+  private DiagnosticUtil() {
+    throw new IllegalStateException("DiagnosticUtil");
+  }
 
   private static final Logger logger = LoggerFactory.getLogger("codex.inventory");
 

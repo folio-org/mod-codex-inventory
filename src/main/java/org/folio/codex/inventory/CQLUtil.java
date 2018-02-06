@@ -50,44 +50,7 @@ public class CQLUtil {
 
   public static CQLNode reducer(CQLNode vn1, CQLTermNode tn, Comparator<CQLTermNode> cmp) {
     if (vn1 instanceof CQLBooleanNode) {
-      CQLBooleanNode n1 = (CQLBooleanNode) vn1;
-      CQLNode n2 = null;
-      CQLNode left = reducer(n1.getLeftOperand(), tn, cmp);
-      CQLNode right = reducer(n1.getRightOperand(), tn, cmp);
-
-      ModifierSet mSet = new ModifierSet(n1.getOperator().toString().toLowerCase());
-      List<Modifier> mods = n1.getModifiers();
-      for (Modifier m : mods) {
-        mSet.addModifier(m.getType(), m.getComparison(), m.getValue());
-      }
-      if (left == null) {
-        n2 = right;
-      } else if (right == null) {
-        n2 = left;
-      }
-      switch (n1.getOperator()) {
-        case AND:
-          if (left != null && right != null) {
-            n2 = new CQLAndNode(left, right, mSet);
-          }
-          break;
-        case OR:
-          if (left != null && right != null) {
-            n2 = new CQLOrNode(left, right, mSet);
-          }
-          break;
-        case NOT:
-          if (left != null && right != null) {
-            n2 = new CQLNotNode(left, right, mSet);
-          }
-          break;
-        case PROX:
-          if (left != null && right != null) {
-            n2 = new CQLProxNode(left, right, mSet);
-          }
-          break;
-      }
-      return n2;
+      return reduceBoolean((CQLBooleanNode) vn1, tn, cmp);
     } else if (vn1 instanceof CQLTermNode) {
       CQLTermNode n1 = (CQLTermNode) vn1;
       if (cmp != null && cmp.compare(n1, tn) == 0) {
@@ -119,5 +82,45 @@ public class CQLUtil {
     } else {
       throw new IllegalArgumentException("unknown type for CQLNode: " + vn1.toString());
     }
+  }
+
+  private static CQLNode reduceBoolean(CQLBooleanNode n1, CQLTermNode tn, Comparator<CQLTermNode> cmp) {
+    CQLNode n2 = null;
+    CQLNode left = reducer(n1.getLeftOperand(), tn, cmp);
+    CQLNode right = reducer(n1.getRightOperand(), tn, cmp);
+
+    ModifierSet mSet = new ModifierSet(n1.getOperator().toString().toLowerCase());
+    List<Modifier> mods = n1.getModifiers();
+    for (Modifier m : mods) {
+      mSet.addModifier(m.getType(), m.getComparison(), m.getValue());
+    }
+    if (left == null) {
+      n2 = right;
+    } else if (right == null) {
+      n2 = left;
+    }
+    switch (n1.getOperator()) {
+      case AND:
+        if (left != null && right != null) {
+          n2 = new CQLAndNode(left, right, mSet);
+        }
+        break;
+      case OR:
+        if (left != null && right != null) {
+          n2 = new CQLOrNode(left, right, mSet);
+        }
+        break;
+      case NOT:
+        if (left != null && right != null) {
+          n2 = new CQLNotNode(left, right, mSet);
+        }
+        break;
+      case PROX:
+        if (left != null && right != null) {
+          n2 = new CQLProxNode(left, right, mSet);
+        }
+        break;
+    }
+    return n2;
   }
 }
