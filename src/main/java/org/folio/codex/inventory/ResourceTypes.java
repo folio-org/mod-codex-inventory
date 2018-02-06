@@ -15,7 +15,7 @@ public class ResourceTypes {
       this.invName = name;
       this.t = t;
     }
-  };
+  }
   List<InstanceMap> l = new LinkedList<>();
 
   ResourceTypes() {
