@@ -9,6 +9,17 @@ public class QueryConvertTest {
 
   String conv(String input) {
     IdMaps idMaps = new IdMaps();
+    idMaps.identifierTypeMap.put("01", "isbn");
+    idMaps.shelfLocationMap.put("02", "loc1");
+    idMaps.shelfLocationMap.put("03", "loc2");
+    idMaps.shelfLocationMap.put("04", "loc2");
+    idMaps.instanceTypeMap.put("10", "Spoken Record");
+    idMaps.instanceTypeMap.put("11", "Books");
+    idMaps.instanceTypeMap.put("12", "Music (Audio)");
+    idMaps.instanceTypeMap.put("13", "Music (MSS)");
+    idMaps.instanceTypeMap.put("14", "Music (Scores)");
+
+
     CQLParser parser = new CQLParser(CQLParser.V1POINT2);
     try {
       CQLNode top = parser.parse(input);
@@ -36,10 +47,12 @@ public class QueryConvertTest {
     assertEquals("contributors = x", conv("contributor = x"));
     assertEquals("contributors == x", conv("contributor == x"));
     assertEquals("identifiers = 123*", conv("identifier=123"));
-    assertEquals("identifiers =/type = isbn a", conv("identifier=/type=isbn 123"));
+    assertEquals("identifiers =/type = unknown a", conv("identifier=/type=unknown 123"));
+    final String isbnRes = "identifiers == \"*\\\"value\\\": \\\"123\\\", \\\"identifierTypeId\\\": \\\"01\\\"*\"";
+    assertEquals(isbnRes, conv("identifier=/type=isbn 123"));
     assertEquals("Error: other", conv("identifier=/type=isbn/other=x 123"));
     assertEquals("Error: missing relation and/or value", conv("identifier=/type=isbn/other 123"));
-    assertEquals("(identifiers =/type = isbn a) and (b)", conv("identifier=/type=isbn 123 and b"));
+    assertEquals("(" + isbnRes + ") and (b)", conv("identifier=/type=isbn 123 and b"));
     // filters
     assertEquals("(p) and (languages = dk)", conv("p and language=dk"));
     assertEquals("languages = dk", conv("language=dk"));
@@ -61,6 +74,12 @@ public class QueryConvertTest {
     assertEquals("title = x sortby title/ascending", conv("title = x sortby title/ascending"));
     assertEquals("title = x sortby title/ascending", conv("title = x and source = local sortby title/ascending"));
     assertEquals("Error: null", conv("title = x and source = kb sortby title/ascending"));
+
+    assertEquals("holdingsRecords.permanentLocationId = 02", conv("location = loc1"));
+    assertEquals("(holdingsRecords.permanentLocationId = 03) or (holdingsRecords.permanentLocationId = 04)", conv("location = loc2"));
+    assertEquals("instanceTypeId = 10", conv("resourceType = audio"));
+    assertEquals("instanceTypeId = 11", conv("resourceType = books"));
+    assertEquals("((instanceTypeId = 12) or (instanceTypeId = 13)) or (instanceTypeId = 14)", conv("resourceType = music"));
 
     // prefix
     assertEquals(">\"info:srw/context-sets/1/dc-v1.1\" (title any fish)",
