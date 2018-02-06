@@ -3,6 +3,7 @@ package org.folio.codex.inventory;
 import io.vertx.core.logging.Logger;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.folio.okapi.common.OkapiLogger;
@@ -100,9 +101,12 @@ public class QueryConvert {
     if ("identifier".equals(index1) && !rel.getModifiers().isEmpty()) {
       n2 = travIdentifier(term1, index2, n2, rel);
     } else if ("resourceType".equals(index1)) {
-      n2 = travResourceType(term1, index2, rel, n2);
+      ResourceTypes rt = new ResourceTypes();
+      n2 = travFieldMap(rt.toInvName(term1), index2, rel, n2, idMaps.instanceTypeMap);
     } else if ("location".equals(index1)) {
-      n2 = travLocation(term1, index2, rel, n2);
+      List<String> names = new LinkedList<>();
+      names.add(term1);
+      n2 = travFieldMap(names, index2, rel, n2, idMaps.shelfLocationMap);
     } else {
       String suffix = "";
       if (term1.matches("^\\d+$")) {
@@ -113,30 +117,9 @@ public class QueryConvert {
     return n2;
   }
 
-  private CQLNode travLocation(final String term1, final String index2, CQLRelation rel, CQLNode n2) {
-    String name = term1;
-    for (Map.Entry<String, String> entry : idMaps.shelfLocationMap.entrySet()) {
-      if (entry.getValue().equalsIgnoreCase(name)) {
-        CQLTermNode n = new CQLTermNode(index2, rel, entry.getKey());
-        if (n2 == null) {
-          n2 = n;
-        } else {
-          ModifierSet mSet = new ModifierSet("or");
-          n2 = new CQLOrNode(n2, n, mSet);
-        }
-      }
-    }
-    if (n2 == null) {
-      n2 = new CQLTermNode(index2, rel, "a");
-    }
-    return n2;
-  }
-
-  private CQLNode travResourceType(final String term1, final String index2, CQLRelation rel, CQLNode n2) {
-    ResourceTypes rt = new ResourceTypes();
-    List<String> names = rt.toInvName(term1);
+  private CQLNode travFieldMap(List<String> names, String index2, CQLRelation rel, CQLNode n2, Map<String, String> map) {
     for (String name : names) {
-      for (Map.Entry<String, String> entry : idMaps.instanceTypeMap.entrySet()) {
+      for (Map.Entry<String, String> entry : map.entrySet()) {
         if (entry.getValue().equalsIgnoreCase(name)) {
           CQLTermNode n = new CQLTermNode(index2, rel, entry.getKey());
           if (n2 == null) {
