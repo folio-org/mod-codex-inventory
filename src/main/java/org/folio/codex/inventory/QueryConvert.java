@@ -58,7 +58,9 @@ public class QueryConvert {
     indexMaps.put("classification", new IndexDescriptor("classification", true));
   }
 
-  CQLNode trav(CQLNode vn1) throws UnknownRelationModifierException, UnknownRelationException, UnknownIndexException {
+  CQLNode trav(CQLNode vn1) throws UnknownRelationModifierException,
+    UnknownRelationException, UnknownIndexException {
+
     if (vn1 instanceof CQLBooleanNode) {
       return travBoolean((CQLBooleanNode) vn1);
     } else if (vn1 instanceof CQLTermNode) {
@@ -80,7 +82,9 @@ public class QueryConvert {
     }
   }
 
-  private CQLNode travTerm(CQLTermNode n1) throws UnknownRelationException, UnknownRelationModifierException, UnknownIndexException {
+  private CQLNode travTerm(CQLTermNode n1) throws UnknownRelationException,
+    UnknownRelationModifierException, UnknownIndexException {
+
     final String term1 = n1.getTerm();
     final String index1 = n1.getIndex();
     IndexDescriptor des = indexMaps.get(index1);
@@ -93,9 +97,8 @@ public class QueryConvert {
       throw new UnknownRelationException(rel.getBase());
     }
     CQLNode n2 = null;
-    List<Modifier> mods = rel.getModifiers();
-    if ("identifier".equals(index1) && !mods.isEmpty()) {
-      n2 = travIdentifier(mods, term1, index2, n2, rel);
+    if ("identifier".equals(index1) && !rel.getModifiers().isEmpty()) {
+      n2 = travIdentifier(term1, index2, n2, rel);
     } else if ("resourceType".equals(index1)) {
       n2 = travResourceType(term1, index2, rel, n2);
     } else if ("location".equals(index1)) {
@@ -151,7 +154,10 @@ public class QueryConvert {
     return n2;
   }
 
-  private CQLNode travIdentifier(List<Modifier> mods, final String term1, final String index2, CQLNode n2, CQLRelation rel) throws UnknownRelationModifierException, UnknownRelationException {
+  private CQLNode travIdentifier(String term1, String index2, CQLNode n2,
+    CQLRelation rel) throws UnknownRelationModifierException, UnknownRelationException {
+
+    List<Modifier> mods = rel.getModifiers();
     for (Modifier mod : mods) {
       if (mod.getValue() == null || mod.getComparison() == null) {
         throw new UnknownRelationModifierException("missing relation and/or value");
@@ -184,7 +190,9 @@ public class QueryConvert {
     return n2;
   }
 
-  private CQLNode travBoolean(CQLBooleanNode n1) throws UnknownIndexException, UnknownRelationModifierException, UnknownRelationException, IllegalArgumentException {
+  private CQLNode travBoolean(CQLBooleanNode n1) throws UnknownIndexException,
+    UnknownRelationModifierException, UnknownRelationException {
+
     CQLNode left = trav(n1.getLeftOperand());
     CQLNode right = trav(n1.getRightOperand());
     ModifierSet mSet = new ModifierSet(n1.getOperator().toString().toLowerCase());
@@ -206,7 +214,9 @@ public class QueryConvert {
     }
   }
 
-  public CQLNode convert(CQLNode top) throws UnknownRelationModifierException, UnknownRelationException, UnknownIndexException {
+  public CQLNode convert(CQLNode top) throws UnknownRelationModifierException,
+    UnknownRelationException, UnknownIndexException {
+
     CQLRelation rel = new CQLRelation("=");
     Comparator<CQLTermNode> f1 = (CQLTermNode n1, CQLTermNode n2) -> {
       if (n1.getIndex().equals(n2.getIndex()) && !n1.getTerm().equals(n2.getTerm())) {
