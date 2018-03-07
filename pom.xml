@@ -17,7 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
-    <ramlfiles_path>${basedir}/raml-util/ramls/codex</ramlfiles_path>
+    <ramlfiles_path>${basedir}/ramls/raml-util/ramls/codex</ramlfiles_path>
     <vertx-version>3.4.1</vertx-version>
   </properties>
 
