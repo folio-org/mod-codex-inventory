@@ -19,6 +19,8 @@ import io.vertx.ext.web.RoutingContext;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.folio.rest.RestVerticle;
+import org.folio.rest.jaxrs.model.Diagnostic;
+import org.folio.rest.jaxrs.model.Instance;
 import org.folio.rest.jaxrs.model.InstanceCollection;
 import org.junit.After;
 import org.junit.Before;
@@ -408,6 +410,8 @@ public class CodexInventoryTest {
   @Test
   public void testCodex(TestContext context) {
     InstanceCollection col;
+    Instance inst;
+    Diagnostic diag;
     Response r;
     String b;
     JsonObject j;
@@ -427,5 +431,137 @@ public class CodexInventoryTest {
     b = r.getBody().asString();
     col = Json.decodeValue(b, InstanceCollection.class);
     context.assertEquals(1, col.getResultInfo().getTotalRecords());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water)")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    context.assertEquals(1, col.getResultInfo().getDiagnostics().size());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("cql parse error", diag.getCode());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=foo=bar")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    context.assertEquals(1, col.getResultInfo().getDiagnostics().size());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("unknown index", diag.getCode());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=language>bar")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    context.assertEquals(1, col.getResultInfo().getDiagnostics().size());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("unknown relation", diag.getCode());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=identifier=/type=isbn 6316800312")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    logger.info("RES " + b.toString());
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(1, col.getResultInfo().getTotalRecords());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=identifier=/type<isbn 6316800312")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("unknown relation", diag.getCode());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=identifier=/x=y 6316800312")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("unknown relation modifier", diag.getCode());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=source=local")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("cql", diag.getCode());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=source=local and kurt")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(1, col.getResultInfo().getTotalRecords());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    inst = Json.decodeValue(b, Instance.class);
+    context.assertEquals("e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6", inst.getId());
+
+    RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac7")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(404);
+
+    RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/1234")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(404);
+
   }
 }

@@ -6,7 +6,6 @@ import io.vertx.core.logging.Logger;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.folio.okapi.common.OkapiLogger;
 import org.folio.rest.jaxrs.model.Contributor;
