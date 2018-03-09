@@ -37,6 +37,8 @@ public class CodexInventoryTest {
   private final int portInventory = 9030;
   private final int portCodex = 9031;
   private final Logger logger = LoggerFactory.getLogger("codex.inventory");
+  private String failMap; // for non-null value signals provoked failure
+  private String failInventory; // for non-null value signals provoked failure
 
   Vertx vertx;
 
@@ -67,6 +69,8 @@ public class CodexInventoryTest {
   }
 
   private void setupInventory(TestContext context, Async async) {
+    failMap = null;
+
     Router router = Router.router(vertx);
     router.get("/instance-storage/instances").handler(this::handlerGetByQuery);
     router.get("/instance-storage/instances/:id").handler(this::handlerGetById);
@@ -158,9 +162,18 @@ public class CodexInventoryTest {
       JsonObject j = new JsonObject();
       j.put("instances", instances);
       j.put("totalRecords", instances.size());
-      ctx.response().headers().add("Content-Type", "application/json");
-      ctx.response().setStatusCode(200);
-      ctx.response().end(j.encodePrettily());
+      if ("status".equals(failInventory)) {
+        ctx.response().setStatusCode(500);
+        ctx.response().end();
+      } else {
+        ctx.response().headers().add("Content-Type", "application/json");
+        ctx.response().setStatusCode(200);
+        if ("badJson".equals(failInventory)) {
+          ctx.response().end("{");
+        } else {
+          ctx.response().end(j.encodePrettily());
+        }
+      }
     });
     ctx.request().exceptionHandler(res -> {
       ctx.response().setStatusCode(500);
@@ -173,9 +186,18 @@ public class CodexInventoryTest {
     ctx.request().endHandler(res -> {
       if ("e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6".equals(id)) {
         JsonObject rec = new JsonObject(records[0]);
-        ctx.response().headers().add("Content-Type", "application/json");
-        ctx.response().setStatusCode(200);
-        ctx.response().end(rec.encodePrettily());
+        if ("status".equals(failInventory)) {
+          ctx.response().setStatusCode(500);
+          ctx.response().end();
+        } else {
+          ctx.response().headers().add("Content-Type", "application/json");
+          ctx.response().setStatusCode(200);
+          if ("badJson".equals(failInventory)) {
+            ctx.response().end("{");
+          } else {
+            ctx.response().end(rec.encodePrettily());
+          }
+        }
       } else {
         ctx.response().setStatusCode(404);
         ctx.response().end("not found");
@@ -188,6 +210,21 @@ public class CodexInventoryTest {
   }
 
   private void handleTypeMaps(RoutingContext ctx, Map<String, String> maps, String n) {
+    logger.info("failMap=" + failMap + " n=" + n);
+    if (failMap != null) {
+      if (failMap.equals(n) || failMap.equals("*")) {
+        logger.info("failMap in action");
+        ctx.request().endHandler(res -> {
+          ctx.response().setStatusCode(500);
+          ctx.response().end(failMap);
+        });
+        ctx.request().exceptionHandler(res -> {
+          ctx.response().setStatusCode(500);
+          ctx.response().end(res.getMessage());
+        });
+        return;
+      }
+    }
     final String limitStr = ctx.request().getParam("limit");
     final String offsetStr = ctx.request().getParam("offset");
 
@@ -196,23 +233,33 @@ public class CodexInventoryTest {
 
     JsonArray a = new JsonArray();
 
-    int pos = 0;
-    for (Map.Entry<String, String> entry : maps.entrySet()) {
-      if (pos >= offset && pos < offset + limit) {
-        JsonObject r = new JsonObject();
-        r.put("id", entry.getKey());
-        r.put("name", entry.getValue());
-        a.add(r);
+    if (!"emptyArray".equals(failMap)) {
+      int pos = 0;
+      for (Map.Entry<String, String> entry : maps.entrySet()) {
+        if (pos >= offset && pos < offset + limit) {
+          JsonObject r = new JsonObject();
+          r.put("id", entry.getKey());
+          r.put("name", entry.getValue());
+          a.add(r);
+        }
+        pos++;
       }
-      pos++;
     }
     JsonObject j = new JsonObject();
-    j.put(n, a);
+    if ("badRoot".equals(failMap)) {
+      j.put("foo", a);
+    } else {
+      j.put(n, a);
+    }
     j.put("totalRecords", maps.size());
     ctx.request().endHandler(res -> {
       ctx.response().setStatusCode(200);
       ctx.response().headers().add("Content-Type", "application/json");
-      ctx.response().end(j.encodePrettily());
+      if ("badJson".equals(failMap)) {
+        ctx.response().end("{");
+      } else {
+        ctx.response().end(j.encodePrettily());
+      }
     });
     ctx.request().exceptionHandler(res -> {
       ctx.response().setStatusCode(500);
@@ -408,7 +455,7 @@ public class CodexInventoryTest {
   }
 
   @Test
-  public void testCodex(TestContext context) {
+  public void testCodex1(TestContext context) {
     InstanceCollection col;
     Instance inst;
     Diagnostic diag;
@@ -418,9 +465,109 @@ public class CodexInventoryTest {
     JsonArray a;
     Header tenantHeader = new Header("X-Okapi-Tenant", "testlib");
     Header urlHeader = new Header("X-Okapi-Url", "http://localhost:" + portInventory);
-
     RestAssured.port = portCodex;
 
+    failMap = "*";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failMap = "contributorNameTypes";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failMap = "instanceTypes";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failMap = "instanceFormats";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failMap = "identifierTypes";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failMap = "shelflocations";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failMap = "badJson";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failMap = "badRoot";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failMap = "emptyArray";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    // no type map failures anymore
+    failMap = null;
     r = RestAssured.given()
       .header(tenantHeader)
       .header(urlHeader)
@@ -482,7 +629,6 @@ public class CodexInventoryTest {
       .log().ifValidationFails()
       .statusCode(200).extract().response();
     b = r.getBody().asString();
-    logger.info("RES " + b.toString());
     col = Json.decodeValue(b, InstanceCollection.class);
     context.assertEquals(1, col.getResultInfo().getTotalRecords());
 
@@ -562,6 +708,44 @@ public class CodexInventoryTest {
       .then()
       .log().ifValidationFails()
       .statusCode(404);
+
+    failInventory = "status";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failInventory = "badJson";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
 
   }
 }
