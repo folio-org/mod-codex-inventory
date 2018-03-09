@@ -38,6 +38,7 @@ public class CodexInventoryTest {
   private final int portCodex = 9031;
   private final Logger logger = LoggerFactory.getLogger("codex.inventory");
   private String failMap; // for non-null value signals provoked failure
+  private String failInventory; // for non-null value signals provoked failure
 
   Vertx vertx;
 
@@ -161,9 +162,18 @@ public class CodexInventoryTest {
       JsonObject j = new JsonObject();
       j.put("instances", instances);
       j.put("totalRecords", instances.size());
-      ctx.response().headers().add("Content-Type", "application/json");
-      ctx.response().setStatusCode(200);
-      ctx.response().end(j.encodePrettily());
+      if ("status".equals(failInventory)) {
+        ctx.response().setStatusCode(500);
+        ctx.response().end();
+      } else {
+        ctx.response().headers().add("Content-Type", "application/json");
+        ctx.response().setStatusCode(200);
+        if ("badJson".equals(failInventory)) {
+          ctx.response().end("{");
+        } else {
+          ctx.response().end(j.encodePrettily());
+        }
+      }
     });
     ctx.request().exceptionHandler(res -> {
       ctx.response().setStatusCode(500);
@@ -176,9 +186,18 @@ public class CodexInventoryTest {
     ctx.request().endHandler(res -> {
       if ("e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6".equals(id)) {
         JsonObject rec = new JsonObject(records[0]);
-        ctx.response().headers().add("Content-Type", "application/json");
-        ctx.response().setStatusCode(200);
-        ctx.response().end(rec.encodePrettily());
+        if ("status".equals(failInventory)) {
+          ctx.response().setStatusCode(500);
+          ctx.response().end();
+        } else {
+          ctx.response().headers().add("Content-Type", "application/json");
+          ctx.response().setStatusCode(200);
+          if ("badJson".equals(failInventory)) {
+            ctx.response().end("{");
+          } else {
+            ctx.response().end(rec.encodePrettily());
+          }
+        }
       } else {
         ctx.response().setStatusCode(404);
         ctx.response().end("not found");
@@ -689,5 +708,44 @@ public class CodexInventoryTest {
       .then()
       .log().ifValidationFails()
       .statusCode(404);
+
+    failInventory = "status";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    failInventory = "badJson";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(500).extract().response();
+    b = r.getBody().asString();
+
   }
 }

@@ -216,9 +216,16 @@ public class CodexInvImpl implements CodexInstancesResource {
       } else {
         Buffer b = res.result();
         logger.info("getByQuery succeeded. Analyzing results");
+        JsonObject j;
         try {
-          InstanceConvert.invToCollection(new JsonObject(b.toString()), col,
-            idMaps, "local");
+          j = new JsonObject(b.toString());
+        } catch (Exception ex) {
+          logger.warn(ex);
+          fut.handle(Future.failedFuture(ex.getMessage()));
+          return;
+        }
+        try {
+          InstanceConvert.invToCollection(j, col, idMaps, "local");
         } catch (Exception ex) {
           DiagnosticUtil.add(col, "record conversion error", ex.getMessage());
         }
