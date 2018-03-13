@@ -1,3 +1,9 @@
+## 1.0.3 2018-03-13
+
+ * MODCXINV-16 Improve test coverage
+ * MODCXINV-17 Use CQLUtil from okapi-common
+ * MODCXINV-18 Update to RMB 19.0.0
+
 ## 1.0.2 2018-02-02
 
  * MODCXINV-13 Ignore ext.selected
