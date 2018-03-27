@@ -109,7 +109,7 @@ public class InstanceConvert {
     }
   }
 
-  private static void mapInstanceFormatId(JsonObject j, IdMaps idMaps, Instance instance) throws IllegalArgumentException {
+  private static void mapInstanceFormatId(JsonObject j, IdMaps idMaps, Instance instance) {
     final String id = j.getString("instanceFormatId");
     if (id != null) {
       final String format = idMaps.instanceFormatMap.get(id);
@@ -120,7 +120,7 @@ public class InstanceConvert {
     }
   }
 
-  private static void mapInstanceTypeId(JsonObject j, IdMaps idMaps, Instance instance) throws IllegalArgumentException {
+  private static void mapInstanceTypeId(JsonObject j, IdMaps idMaps, Instance instance) {
     final String id = j.getString("instanceTypeId");
     if (id == null) {
       throw (new IllegalArgumentException("instanceTypeId missing"));
@@ -181,7 +181,7 @@ public class InstanceConvert {
     }
   }
 
-  private static void mapTitle(JsonObject j, Instance instance) throws IllegalArgumentException {
+  private static void mapTitle(JsonObject j, Instance instance) {
     final String title = j.getString("title");
     if (title == null) {
       throw (new IllegalArgumentException("title missing"));
@@ -189,7 +189,7 @@ public class InstanceConvert {
     instance.setTitle(title);
   }
 
-  private static void mapId(JsonObject j, Instance instance) throws IllegalArgumentException {
+  private static void mapId(JsonObject j, Instance instance) {
     final String id = j.getString("id");
     if (id == null) {
       throw (new IllegalArgumentException("id missing"));
