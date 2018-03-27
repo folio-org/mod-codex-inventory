@@ -40,6 +40,10 @@ public class CodexInventoryTest {
   private String failMap; // for non-null value signals provoked failure
   private String failInventory; // for non-null value signals provoked failure
 
+  private final String ID1 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6";
+  private final String ID2 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac7";
+  private final String ID3 = "a2724b37-1518-4d41-be86-39352af6b3cc";
+
   Vertx vertx;
 
   public CodexInventoryTest() {
@@ -96,7 +100,7 @@ public class CodexInventoryTest {
 
   private final String[] records = {""
     + "  {\n"
-    + "    \"id\" : \"e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6\",\n"
+    + "    \"id\" : \"" + ID1 + "\",\n"
     + "    \"source\" : \"Sample\",\n"
     + "    \"title\" : \"Transparent water\",\n"
     + "    \"alternativeTitles\" : [ ],\n"
@@ -184,7 +188,7 @@ public class CodexInventoryTest {
   private void handlerGetById(RoutingContext ctx) {
     final String id = ctx.request().getParam("id");
     ctx.request().endHandler(res -> {
-      if ("e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6".equals(id)) {
+      if (ID1.equals(id)) {
         JsonObject rec = new JsonObject(records[0]);
         if ("status".equals(failInventory)) {
           ctx.response().setStatusCode(500);
@@ -198,6 +202,9 @@ public class CodexInventoryTest {
             ctx.response().end(rec.encodePrettily());
           }
         }
+      } else if (ID3.equals(id)) {
+        ctx.response().setStatusCode(401);
+        ctx.response().end("unauthorized");
       } else {
         ctx.response().setStatusCode(404);
         ctx.response().end("not found");
@@ -376,19 +383,17 @@ public class CodexInventoryTest {
     context.assertEquals(1, j.getInteger("totalRecords"));
     context.assertEquals("Sample", j.getJsonArray("instances").getJsonObject(0).getString("source"));
 
-    final String id1 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6";
     r = RestAssured.given()
-      .get("/instance-storage/instances/" + id1)
+      .get("/instance-storage/instances/" + ID1)
       .then()
       .log().ifValidationFails()
       .statusCode(200).extract().response();
     b = r.getBody().asString();
     j = new JsonObject(b);
-    context.assertEquals(id1, j.getString("id"));
+    context.assertEquals(ID1, j.getString("id"));
 
-    final String id2 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac7";
     RestAssured.given()
-      .get("/instance-storage/instances/" + id2)
+      .get("/instance-storage/instances/" + ID2)
       .then()
       .log().ifValidationFails()
       .statusCode(404);
@@ -398,6 +403,12 @@ public class CodexInventoryTest {
       .then()
       .log().ifValidationFails()
       .statusCode(404);
+
+    RestAssured.given()
+      .get("/instance-storage/instances/" + ID3)
+      .then()
+      .log().ifValidationFails()
+      .statusCode(401);
 
     r = RestAssured.given()
       .get("/contributor-name-types")
