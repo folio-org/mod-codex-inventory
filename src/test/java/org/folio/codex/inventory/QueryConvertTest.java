@@ -9,15 +9,15 @@ public class QueryConvertTest {
 
   String conv(String input) {
     IdMaps idMaps = new IdMaps();
-    idMaps.identifierTypeMap.put("01", "isbn");
-    idMaps.shelfLocationMap.put("02", "loc1");
-    idMaps.shelfLocationMap.put("03", "loc2");
-    idMaps.shelfLocationMap.put("04", "loc2");
-    idMaps.instanceTypeMap.put("10", "Spoken Record");
-    idMaps.instanceTypeMap.put("11", "Books");
-    idMaps.instanceTypeMap.put("12", "Music (Audio)");
-    idMaps.instanceTypeMap.put("13", "Music (MSS)");
-    idMaps.instanceTypeMap.put("14", "Music (Scores)");
+    idMaps.getIdentifierTypeMap().put("01", "isbn");
+    idMaps.getShelfLocationMap().put("02", "loc1");
+    idMaps.getShelfLocationMap().put("03", "loc2");
+    idMaps.getShelfLocationMap().put("04", "loc2");
+    idMaps.getInstanceTypeMap().put("10", "Spoken Record");
+    idMaps.getInstanceTypeMap().put("11", "Books");
+    idMaps.getInstanceTypeMap().put("12", "Music (Audio)");
+    idMaps.getInstanceTypeMap().put("13", "Music (MSS)");
+    idMaps.getInstanceTypeMap().put("14", "Music (Scores)");
 
 
     CQLParser parser = new CQLParser(CQLParser.V1POINT2);
