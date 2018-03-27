@@ -41,8 +41,9 @@ public class CodexInventoryTest {
   private String failInventory; // for non-null value signals provoked failure
 
   private final String ID1 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6";
-  private final String ID2 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac7";
-  private final String ID3 = "a2724b37-1518-4d41-be86-39352af6b3cc";
+  private final String ID2 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac8";
+  private final String ID_404 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac7";
+  private final String ID_401 = "a2724b37-1518-4d41-be86-39352af6b3cc";
 
   Vertx vertx;
 
@@ -154,6 +155,14 @@ public class CodexInventoryTest {
     + "      \"updatedDate\" : \"2018-02-02T03:40:46.084+0000\",\n"
     + "      \"updatedByUserId\" : \"1ad737b0-d847-11e6-bf26-cec0c932ce01\"\n"
     + "    }\n"
+    + "  }",
+    ""
+    + "  {\n"
+    + "    \"id\" : \"" + ID2 + "\",\n"
+    + "    \"source\" : \"Sample\",\n"
+    + "    \"title\" : \"Transparent water\",\n"
+    + "    \"alternativeTitles\" : [ ],\n"
+    + "    }\n"
     + "  }"
   };
 
@@ -162,10 +171,17 @@ public class CodexInventoryTest {
     ctx.request().endHandler(res -> {
       JsonArray instances = new JsonArray();
       JsonObject rec = new JsonObject(records[0]);
+      if (failInventory != null && failInventory.startsWith("-")) {
+        rec.remove(failInventory.substring(1));
+      }
       instances.add(rec);
       JsonObject j = new JsonObject();
-      j.put("instances", instances);
-      j.put("totalRecords", instances.size());
+      if (!"instances".equals(failInventory)) {
+        j.put("instances", instances);
+      }
+      if (!"totalRecords".equals(failInventory)) {
+        j.put("totalRecords", instances.size());
+      }
       if ("status".equals(failInventory)) {
         ctx.response().setStatusCode(500);
         ctx.response().end();
@@ -202,7 +218,7 @@ public class CodexInventoryTest {
             ctx.response().end(rec.encodePrettily());
           }
         }
-      } else if (ID3.equals(id)) {
+      } else if (ID_401.equals(id)) {
         ctx.response().setStatusCode(401);
         ctx.response().end("unauthorized");
       } else {
@@ -393,7 +409,7 @@ public class CodexInventoryTest {
     context.assertEquals(ID1, j.getString("id"));
 
     RestAssured.given()
-      .get("/instance-storage/instances/" + ID2)
+      .get("/instance-storage/instances/" + ID_404)
       .then()
       .log().ifValidationFails()
       .statusCode(404);
@@ -405,7 +421,7 @@ public class CodexInventoryTest {
       .statusCode(404);
 
     RestAssured.given()
-      .get("/instance-storage/instances/" + ID3)
+      .get("/instance-storage/instances/" + ID_401)
       .then()
       .log().ifValidationFails()
       .statusCode(401);
@@ -738,6 +754,76 @@ public class CodexInventoryTest {
       .log().ifValidationFails()
       .statusCode(500).extract().response();
     b = r.getBody().asString();
+
+    failInventory = "instances";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("instances missing", diag.getMessage());
+
+    failInventory = "totalRecords";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("totalRecords missing", diag.getMessage());
+
+    failInventory = "-id";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("id missing", diag.getMessage());
+
+    failInventory = "-title";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("title missing", diag.getMessage());
+
+    failInventory = "-instanceTypeId";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+    diag = col.getResultInfo().getDiagnostics().get(0);
+    context.assertEquals("instanceTypeId missing", diag.getMessage());
 
     failInventory = "badJson";
     r = RestAssured.given()

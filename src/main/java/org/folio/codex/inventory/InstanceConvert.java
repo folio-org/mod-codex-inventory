@@ -25,7 +25,7 @@ public class InstanceConvert {
 
     JsonArray a = j.getJsonArray("instances");
     if (a == null) {
-      throw (new IllegalArgumentException("instances"));
+      throw (new IllegalArgumentException("instances missing"));
     }
     List<Instance> l = new LinkedList<>();
     for (int i = 0; i < a.size(); i++) {
@@ -57,14 +57,6 @@ public class InstanceConvert {
     mapSource(instance, source);
     mapLanguages(j, instance);
     mapEdition(j, instance);
-    mapModifiedDate(j, instance);
-  }
-
-  private static void mapModifiedDate(JsonObject j, Instance instance) {
-    final String l = j.getString("modifiedDate");
-    if (l != null) {
-      instance.setLastModified(l);
-    }
   }
 
   private static void mapEdition(JsonObject j, Instance instance) {
