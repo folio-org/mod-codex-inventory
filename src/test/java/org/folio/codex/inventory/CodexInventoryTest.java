@@ -105,6 +105,7 @@ public class CodexInventoryTest {
     + "    \"source\" : \"Sample\",\n"
     + "    \"title\" : \"Transparent water\",\n"
     + "    \"alternativeTitles\" : [ \"alternative titles\" ],\n"
+    + "    \"edition\" : \"1st edition\",\n"
     + "    \"series\" : [ \"first series\" ],\n"
     + "    \"identifiers\" : [ {\n"
     + "      \"value\" : \"ocn968777846\",\n"
