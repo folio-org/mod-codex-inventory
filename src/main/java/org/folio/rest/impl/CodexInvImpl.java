@@ -115,8 +115,8 @@ public class CodexInvImpl implements CodexInstancesResource {
   }
 
   private void getMaps(Context context, LHeaders headers, Handler<AsyncResult<Void>> fut) {
-    if (idMaps.contributorNameTypeIdMap.isEmpty()) {
-      getMap(context, headers, idMaps.contributorNameTypeIdMap, "/contributor-name-types", "contributorNameTypes",
+    if (idMaps.getContributorNameTypeIdMap().isEmpty()) {
+      getMap(context, headers, idMaps.getContributorNameTypeIdMap(), "/contributor-name-types", "contributorNameTypes",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);
@@ -124,8 +124,8 @@ public class CodexInvImpl implements CodexInstancesResource {
             fut.handle(Future.failedFuture(res.cause()));
           }
         });
-    } else if (idMaps.instanceTypeMap.isEmpty()) {
-      getMap(context, headers, idMaps.instanceTypeMap, "/instance-types", "instanceTypes",
+    } else if (idMaps.getInstanceTypeMap().isEmpty()) {
+      getMap(context, headers, idMaps.getInstanceTypeMap(), "/instance-types", "instanceTypes",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);
@@ -133,8 +133,8 @@ public class CodexInvImpl implements CodexInstancesResource {
             fut.handle(Future.failedFuture(res.cause()));
           }
         });
-    } else if (idMaps.instanceFormatMap.isEmpty()) {
-      getMap(context, headers, idMaps.instanceFormatMap, "/instance-formats", "instanceFormats",
+    } else if (idMaps.getInstanceFormatMap().isEmpty()) {
+      getMap(context, headers, idMaps.getInstanceFormatMap(), "/instance-formats", "instanceFormats",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);
@@ -142,8 +142,8 @@ public class CodexInvImpl implements CodexInstancesResource {
             fut.handle(Future.failedFuture(res.cause()));
           }
         });
-    } else if (idMaps.identifierTypeMap.isEmpty()) {
-      getMap(context, headers, idMaps.identifierTypeMap, "/identifier-types", "identifierTypes",
+    } else if (idMaps.getIdentifierTypeMap().isEmpty()) {
+      getMap(context, headers, idMaps.getIdentifierTypeMap(), "/identifier-types", "identifierTypes",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);
@@ -151,8 +151,8 @@ public class CodexInvImpl implements CodexInstancesResource {
             fut.handle(Future.failedFuture(res.cause()));
           }
         });
-    } else if (idMaps.shelfLocationMap.isEmpty()) {
-      getMap(context, headers, idMaps.shelfLocationMap, "/shelf-locations", "shelflocations",
+    } else if (idMaps.getShelfLocationMap().isEmpty()) {
+      getMap(context, headers, idMaps.getShelfLocationMap(), "/shelf-locations", "shelflocations",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);

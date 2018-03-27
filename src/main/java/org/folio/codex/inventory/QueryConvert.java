@@ -103,11 +103,11 @@ public class QueryConvert {
       n2 = travIdentifier(term1, index2, n2, rel);
     } else if ("resourceType".equals(index1)) {
       ResourceTypes rt = new ResourceTypes();
-      n2 = travFieldMap(rt.toInvName(term1), index2, rel, n2, idMaps.instanceTypeMap);
+      n2 = travFieldMap(rt.toInvName(term1), index2, rel, n2, idMaps.getInstanceTypeMap());
     } else if ("location".equals(index1)) {
       List<String> names = new LinkedList<>();
       names.add(term1);
-      n2 = travFieldMap(names, index2, rel, n2, idMaps.shelfLocationMap);
+      n2 = travFieldMap(names, index2, rel, n2, idMaps.getShelfLocationMap());
     } else {
       String suffix = "";
       if (term1.matches("^\\d+$")) {
@@ -152,7 +152,7 @@ public class QueryConvert {
       if (!"type".equals(mod.getType())) {
         throw new UnknownRelationModifierException(mod.getType());
       }
-      for (Map.Entry<String, String> entry : idMaps.identifierTypeMap.entrySet()) {
+      for (Map.Entry<String, String> entry : idMaps.getIdentifierTypeMap().entrySet()) {
         if (mod.getValue().equalsIgnoreCase(entry.getValue())) {
           final String sq = "\"";
           final String bsonTerm = "*" + sq + "value" + sq + ": " + sq + term1 + sq
