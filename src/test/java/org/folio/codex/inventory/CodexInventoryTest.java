@@ -669,6 +669,17 @@ public class CodexInventoryTest {
     r = RestAssured.given()
       .header(tenantHeader)
       .header(urlHeader)
+      .get("/codex-instances?query=source=foo")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(200).extract().response();
+    b = r.getBody().asString();
+    col = Json.decodeValue(b, InstanceCollection.class);
+    context.assertEquals(0, col.getResultInfo().getTotalRecords());
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
       .get("/codex-instances?query=source=local")
       .then()
       .log().ifValidationFails()
