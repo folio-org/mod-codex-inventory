@@ -43,7 +43,6 @@ public class CodexInventoryTest {
   private final String ID1 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6";
   private final String ID2 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac8";
   private final String ID_404 = "e54b1f4d-7d05-4b1a-9368-3c36b75d8ac7";
-  private final String ID_401 = "a2724b37-1518-4d41-be86-39352af6b3cc";
 
   Vertx vertx;
 
@@ -181,8 +180,8 @@ public class CodexInventoryTest {
       if (!"totalRecords".equals(failInventory)) {
         j.put("totalRecords", instances.size());
       }
-      if ("status".equals(failInventory)) {
-        ctx.response().setStatusCode(500);
+      if (failInventory != null && failInventory.matches("^[0-9]+")) {
+        ctx.response().setStatusCode(Integer.parseInt(failInventory));
         ctx.response().end();
       } else {
         ctx.response().headers().add("Content-Type", "application/json");
@@ -205,8 +204,8 @@ public class CodexInventoryTest {
     ctx.request().endHandler(res -> {
       if (ID1.equals(id)) {
         JsonObject rec = new JsonObject(records[0]);
-        if ("status".equals(failInventory)) {
-          ctx.response().setStatusCode(500);
+        if (failInventory != null && failInventory.matches("^[0-9]+")) {
+          ctx.response().setStatusCode(Integer.parseInt(failInventory));
           ctx.response().end();
         } else {
           ctx.response().headers().add("Content-Type", "application/json");
@@ -217,9 +216,6 @@ public class CodexInventoryTest {
             ctx.response().end(rec.encodePrettily());
           }
         }
-      } else if (ID_401.equals(id)) {
-        ctx.response().setStatusCode(401);
-        ctx.response().end("unauthorized");
       } else {
         ctx.response().setStatusCode(404);
         ctx.response().end("not found");
@@ -419,12 +415,6 @@ public class CodexInventoryTest {
       .log().ifValidationFails()
       .statusCode(404);
 
-    RestAssured.given()
-      .get("/instance-storage/instances/" + ID_401)
-      .then()
-      .log().ifValidationFails()
-      .statusCode(401);
-
     r = RestAssured.given()
       .get("/contributor-name-types")
       .then()
@@ -497,7 +487,7 @@ public class CodexInventoryTest {
     r = RestAssured.given()
       .header(tenantHeader)
       .header(urlHeader)
-      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6")
+      .get("/codex-instances/" + ID1)
       .then()
       .log().ifValidationFails()
       .statusCode(500).extract().response();
@@ -701,18 +691,18 @@ public class CodexInventoryTest {
     r = RestAssured.given()
       .header(tenantHeader)
       .header(urlHeader)
-      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6")
+      .get("/codex-instances/" + ID1)
       .then()
       .log().ifValidationFails()
       .statusCode(200).extract().response();
     b = r.getBody().asString();
     inst = Json.decodeValue(b, Instance.class);
-    context.assertEquals("e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6", inst.getId());
+    context.assertEquals(ID1, inst.getId());
 
     RestAssured.given()
       .header(tenantHeader)
       .header(urlHeader)
-      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac7")
+      .get("/codex-instances/" + ID_404)
       .then()
       .log().ifValidationFails()
       .statusCode(404);
@@ -745,11 +735,39 @@ public class CodexInventoryTest {
       .statusCode(400).extract().response();
     b = r.getBody().asString();
 
-    failInventory = "status";
+    failInventory = "401";
+    RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/" + ID1)
+      .then()
+      .log().ifValidationFails()
+      .statusCode(401);
+
     r = RestAssured.given()
       .header(tenantHeader)
       .header(urlHeader)
-      .get("/codex-instances/e54b1f4d-7d05-4b1a-9368-3c36b75d8ac6")
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(401).extract().response();
+    b = r.getBody().asString();
+
+    failInventory = "400";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(400).extract().response();
+    b = r.getBody().asString();
+
+    failInventory = "500";
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances/" + ID1)
       .then()
       .log().ifValidationFails()
       .statusCode(500).extract().response();
