@@ -292,6 +292,7 @@ public class CodexInvImpl implements CodexInstancesResource {
     });
   }
 
+  @Validate
   @Override
   public void getCodexInstancesById(String id, String lang,
     Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> handler,
