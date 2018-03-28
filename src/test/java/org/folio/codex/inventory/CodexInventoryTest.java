@@ -735,6 +735,16 @@ public class CodexInventoryTest {
       .log().ifValidationFails()
       .statusCode(404);
 
+    // should be captured with the @validate
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water&limit=-1")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(400).extract().response();
+    b = r.getBody().asString();
+
     failInventory = "status";
     r = RestAssured.given()
       .header(tenantHeader)
