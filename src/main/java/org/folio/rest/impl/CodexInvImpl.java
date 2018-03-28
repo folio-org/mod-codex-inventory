@@ -35,6 +35,20 @@ import org.z3950.zing.cql.UnknownRelationModifierException;
 
 public class CodexInvImpl implements CodexInstancesResource {
 
+  private class HttpError401 extends Throwable {
+
+    HttpError401() {
+      super();
+    }
+  }
+
+  private class HttpError400 extends Throwable {
+
+    HttpError400() {
+      super();
+    }
+  }
+
   private static final Logger logger = LoggerFactory.getLogger("codex.inventory");
 
   private void getUrl(String url, HttpClient client,
@@ -50,6 +64,10 @@ public class CodexInvImpl implements CodexInstancesResource {
           fut.handle(Future.succeededFuture(b));
         } else if (res.statusCode() == 404) {
           fut.handle(Future.succeededFuture(Buffer.buffer())); // empty buffer
+        } else if (res.statusCode() == 401) {
+          fut.handle(Future.failedFuture(new HttpError401()));
+        } else if (res.statusCode() == 400) {
+          fut.handle(Future.failedFuture(new HttpError400()));
         } else {
           fut.handle(Future.failedFuture("Get url " + url + " returned " + res.statusCode()));
         }
@@ -300,8 +318,16 @@ public class CodexInvImpl implements CodexInstancesResource {
             } else {
               getByQuery(vertxContext, res2.result(), lHeaders, col, res3 -> {
                 if (res3.failed()) {
-                  handler.handle(Future.succeededFuture(
-                    CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res3.cause().getMessage())));
+                  if (res3.cause() instanceof HttpError401) {
+                    handler.handle(Future.succeededFuture(
+                      CodexInstancesResource.GetCodexInstancesResponse.withPlainUnauthorized("")));
+                  } else if (res3.cause() instanceof HttpError400) {
+                    handler.handle(Future.succeededFuture(
+                      CodexInstancesResource.GetCodexInstancesResponse.withPlainBadRequest("")));
+                  } else {
+                    handler.handle(Future.succeededFuture(
+                      CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res3.cause().getMessage())));
+                  }
                 } else {
                   handler.handle(Future.succeededFuture(
                     CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
@@ -335,8 +361,14 @@ public class CodexInvImpl implements CodexInstancesResource {
         Instance instance = new Instance();
         getById(id, vertxContext, lHeaders, instance, res2 -> {
           if (res2.failed()) {
-            handler.handle(Future.succeededFuture(
-              CodexInstancesResource.GetCodexInstancesByIdResponse.withPlainInternalServerError(res2.cause().getMessage())));
+            logger.info("getById failed..........");
+            if (res2.cause() instanceof HttpError401) {
+              handler.handle(Future.succeededFuture(
+                CodexInstancesResource.GetCodexInstancesByIdResponse.withPlainUnauthorized(id)));
+            } else {
+              handler.handle(Future.succeededFuture(
+                CodexInstancesResource.GetCodexInstancesByIdResponse.withPlainInternalServerError(res2.cause().getMessage())));
+            }
           } else {
             if (instance.getId() == null) {
               handler.handle(Future.succeededFuture(
