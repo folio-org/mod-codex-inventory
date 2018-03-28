@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 import org.folio.codex.inventory.IdMaps;
 import org.folio.codex.inventory.QueryConvert;
 import org.folio.okapi.common.XOkapiHeaders;
+import org.folio.rest.annotations.Validate;
 import org.folio.rest.jaxrs.model.Instance;
 import org.folio.rest.jaxrs.model.InstanceCollection;
 import org.folio.rest.jaxrs.model.ResultInfo;
@@ -260,6 +261,7 @@ public class CodexInvImpl implements CodexInstancesResource {
     });
   }
 
+  @Validate
   @Override
   public void getCodexInstances(String query, int offset, int limit, String lang,
           Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> handler,
