@@ -160,6 +160,8 @@ public class CodexInventoryTest {
   };
 
   private void handlerGetByQuery(RoutingContext ctx) {
+    final String limitStr = ctx.request().getParam("limit");
+    final int limit = limitStr != null ? Integer.parseInt(limitStr) : 20;
     final String query = ctx.request().getParam("query");
     ctx.request().endHandler(res -> {
       JsonArray instances = new JsonArray();
@@ -181,7 +183,10 @@ public class CodexInventoryTest {
       if (!"totalRecords".equals(failInventory)) {
         j.put("totalRecords", instances.size());
       }
-      if ("status".equals(failInventory)) {
+      if (limit < 0) { // simulate inventory-storage returning 500 for bad limit
+        ctx.response().setStatusCode(500);
+        ctx.response().end();
+      } else if ("status".equals(failInventory)) {
         ctx.response().setStatusCode(500);
         ctx.response().end();
       } else {
@@ -734,6 +739,24 @@ public class CodexInventoryTest {
       .then()
       .log().ifValidationFails()
       .statusCode(404);
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water&limit=-1")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(400).extract().response();
+    b = r.getBody().asString();
+
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?query=water&offset=-1")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(400).extract().response();
+    b = r.getBody().asString();
 
     failInventory = "status";
     r = RestAssured.given()
