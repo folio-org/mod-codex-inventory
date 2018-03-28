@@ -289,6 +289,37 @@ public class CodexInvImpl implements CodexInstancesResource {
     });
   }
 
+  private void getCodexInstances2(AsyncResult<String> res2, Context vertxContext,
+    LHeaders lHeaders, Handler<AsyncResult<Response>> handler) {
+
+    InstanceCollection col = new InstanceCollection();
+    ResultInfo resultInfo = new ResultInfo();
+    resultInfo.setTotalRecords(0);
+    col.setResultInfo(resultInfo);
+    if (res2.result().isEmpty()) {
+      handler.handle(Future.succeededFuture(
+        CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
+    } else {
+      getByQuery(vertxContext, res2.result(), lHeaders, col, res3 -> {
+        if (res3.failed()) {
+          if (res3.cause() instanceof HttpError401) {
+            handler.handle(Future.succeededFuture(
+              CodexInstancesResource.GetCodexInstancesResponse.withPlainUnauthorized("")));
+          } else if (res3.cause() instanceof HttpError400) {
+            handler.handle(Future.succeededFuture(
+              CodexInstancesResource.GetCodexInstancesResponse.withPlainBadRequest("")));
+          } else {
+            handler.handle(Future.succeededFuture(
+              CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res3.cause().getMessage())));
+          }
+        } else {
+          handler.handle(Future.succeededFuture(
+            CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
+        }
+      });
+    }
+  }
+
   @Validate
   @Override
   public void getCodexInstances(String query, int offset, int limit, String lang,
@@ -308,32 +339,7 @@ public class CodexInvImpl implements CodexInstancesResource {
             handler.handle(Future.succeededFuture(
               CodexInstancesResource.GetCodexInstancesResponse.withPlainBadRequest(res2.cause().getMessage())));
           } else {
-            InstanceCollection col = new InstanceCollection();
-            ResultInfo resultInfo = new ResultInfo();
-            resultInfo.setTotalRecords(0);
-            col.setResultInfo(resultInfo);
-            if (res2.result().isEmpty()) {
-              handler.handle(Future.succeededFuture(
-                CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
-            } else {
-              getByQuery(vertxContext, res2.result(), lHeaders, col, res3 -> {
-                if (res3.failed()) {
-                  if (res3.cause() instanceof HttpError401) {
-                    handler.handle(Future.succeededFuture(
-                      CodexInstancesResource.GetCodexInstancesResponse.withPlainUnauthorized("")));
-                  } else if (res3.cause() instanceof HttpError400) {
-                    handler.handle(Future.succeededFuture(
-                      CodexInstancesResource.GetCodexInstancesResponse.withPlainBadRequest("")));
-                  } else {
-                    handler.handle(Future.succeededFuture(
-                      CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res3.cause().getMessage())));
-                  }
-                } else {
-                  handler.handle(Future.succeededFuture(
-                    CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
-                }
-              });
-            }
+            getCodexInstances2(res2, vertxContext, lHeaders, handler);
           }
         });
       }
@@ -361,7 +367,6 @@ public class CodexInvImpl implements CodexInstancesResource {
         Instance instance = new Instance();
         getById(id, vertxContext, lHeaders, instance, res2 -> {
           if (res2.failed()) {
-            logger.info("getById failed..........");
             if (res2.cause() instanceof HttpError401) {
               handler.handle(Future.succeededFuture(
                 CodexInstancesResource.GetCodexInstancesByIdResponse.withPlainUnauthorized(id)));

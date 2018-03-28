@@ -10,6 +10,7 @@ public class QueryConvertTest {
   String conv(String input) {
     IdMaps idMaps = new IdMaps();
     idMaps.getIdentifierTypeMap().put("01", "isbn");
+    idMaps.getIdentifierTypeMap().put("15", "issn");
     idMaps.getShelfLocationMap().put("02", "loc1");
     idMaps.getShelfLocationMap().put("03", "loc2");
     idMaps.getShelfLocationMap().put("04", "loc2");
@@ -42,6 +43,7 @@ public class QueryConvertTest {
     assertEquals("(a) and (b)", conv("a and b"));
     assertEquals("(a) or (b)", conv("a or b"));
     assertEquals("(a) not (b)", conv("a not b"));
+    assertEquals("(a) prox/distance = 1 (b)", conv("a prox/distance=1 b"));
     assertEquals("((a) and (b)) and (c)", conv("a and b and c"));
     assertEquals("Error: contributors", conv("contributors = x"));
     assertEquals("contributors = x", conv("contributor = x"));
@@ -50,6 +52,10 @@ public class QueryConvertTest {
     assertEquals("identifiers =/type = unknown a", conv("identifier=/type=unknown 123"));
     final String isbnRes = "identifiers == \"*\\\"value\\\": \\\"123\\\", \\\"identifierTypeId\\\": \\\"01\\\"*\"";
     assertEquals(isbnRes, conv("identifier=/type=isbn 123"));
+
+    final String issnRes = "identifiers == \"*\\\"value\\\": \\\"123\\\", \\\"identifierTypeId\\\": \\\"15\\\"*\"";
+    assertEquals("(" + isbnRes + ") or (" + issnRes + ")", conv("identifier=/type=isbn/type=issn 123"));
+
     assertEquals("Error: other", conv("identifier=/type=isbn/other=x 123"));
     assertEquals("Error: missing relation and/or value", conv("identifier=/type=isbn/other 123"));
     assertEquals("(" + isbnRes + ") and (b)", conv("identifier=/type=isbn 123 and b"));
@@ -80,6 +86,7 @@ public class QueryConvertTest {
     assertEquals("instanceTypeId = 10", conv("resourceType = audio"));
     assertEquals("instanceTypeId = 11", conv("resourceType = books"));
     assertEquals("((instanceTypeId = 12) or (instanceTypeId = 13)) or (instanceTypeId = 14)", conv("resourceType = music"));
+    assertEquals("instanceTypeId = a", conv("resourceType = foo"));
 
     // prefix
     assertEquals(">\"info:srw/context-sets/1/dc-v1.1\" (title any fish)",
