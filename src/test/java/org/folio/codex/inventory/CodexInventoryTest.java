@@ -611,13 +611,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=water)")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(400).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    context.assertEquals(1, col.getResultInfo().getDiagnostics().size());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("cql parse error", diag.getCode());
+    context.assertTrue(b.contains("cql parse error"));
 
     r = RestAssured.given()
       .header(tenantHeader)
@@ -625,13 +621,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=foo=bar")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(400).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    context.assertEquals(1, col.getResultInfo().getDiagnostics().size());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("unknown index", diag.getCode());
+    context.assertTrue(b.contains("unknown index: foo"));
 
     r = RestAssured.given()
       .header(tenantHeader)
@@ -639,13 +631,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=language>bar")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(400).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    context.assertEquals(1, col.getResultInfo().getDiagnostics().size());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("unknown relation", diag.getCode());
+    context.assertTrue(b.contains("unknown relation"));
 
     r = RestAssured.given()
       .header(tenantHeader)
@@ -664,12 +652,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=identifier=/type<isbn 6316800312")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(400).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("unknown relation", diag.getCode());
+    context.assertTrue(b.contains("unknown relation"));
 
     r = RestAssured.given()
       .header(tenantHeader)
@@ -677,12 +662,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=identifier=/x=y 6316800312")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(400).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("unknown relation modifier", diag.getCode());
+    context.assertTrue(b.contains("unknown relation modifier"));
 
     r = RestAssured.given()
       .header(tenantHeader)
@@ -690,12 +672,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=source=local")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(400).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("cql", diag.getCode());
+    context.assertTrue(b.contains("cql:"));
 
     r = RestAssured.given()
       .header(tenantHeader)
@@ -745,6 +724,16 @@ public class CodexInventoryTest {
       .statusCode(400).extract().response();
     b = r.getBody().asString();
 
+    // should be captured with the @validate
+    r = RestAssured.given()
+      .header(tenantHeader)
+      .header(urlHeader)
+      .get("/codex-instances?lang=123")
+      .then()
+      .log().ifValidationFails()
+      .statusCode(400).extract().response();
+    b = r.getBody().asString();
+
     failInventory = "status";
     r = RestAssured.given()
       .header(tenantHeader)
@@ -771,12 +760,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=water")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(500).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("instances missing", diag.getMessage());
+    context.assertTrue(b.contains("instances missing"));
 
     failInventory = "totalRecords";
     r = RestAssured.given()
@@ -785,12 +771,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=water")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(500).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("totalRecords missing", diag.getMessage());
+    context.assertTrue(b.contains("totalRecords missing"));
 
     failInventory = "-id";
     r = RestAssured.given()
@@ -799,12 +782,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=water")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(500).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("id missing", diag.getMessage());
+    context.assertTrue(b.contains("id missing"));
 
     failInventory = "-title";
     r = RestAssured.given()
@@ -813,12 +793,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=water")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(500).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("title missing", diag.getMessage());
+    context.assertTrue(b.contains("title missing"));
 
     failInventory = "-instanceTypeId";
     r = RestAssured.given()
@@ -827,12 +804,9 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=water")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(500).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertEquals("instanceTypeId missing", diag.getMessage());
+    context.assertTrue(b.contains("instanceTypeId missing"));
 
     failInventory = "instanceFormatId=112233";
     r = RestAssured.given()
@@ -841,13 +815,10 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=water")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(500).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertTrue(diag.getMessage().startsWith("instanceFormatId "));
-    context.assertTrue(diag.getMessage().contains("does not exist"));
+    context.assertTrue(b.contains("instanceFormatId "));
+    context.assertTrue(b.contains("does not exist"));
 
     failInventory = "instanceTypeId=112233";
     r = RestAssured.given()
@@ -856,13 +827,10 @@ public class CodexInventoryTest {
       .get("/codex-instances?query=water")
       .then()
       .log().ifValidationFails()
-      .statusCode(200).extract().response();
+      .statusCode(500).extract().response();
     b = r.getBody().asString();
-    col = Json.decodeValue(b, InstanceCollection.class);
-    context.assertEquals(0, col.getResultInfo().getTotalRecords());
-    diag = col.getResultInfo().getDiagnostics().get(0);
-    context.assertTrue(diag.getMessage().startsWith("instanceTypeId "));
-    context.assertTrue(diag.getMessage().contains("does not exist"));
+    context.assertTrue(b.contains("instanceTypeId "));
+    context.assertTrue(b.contains("does not exist"));
 
     failInventory = "badJson";
     r = RestAssured.given()

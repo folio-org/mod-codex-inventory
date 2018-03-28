@@ -1,6 +1,5 @@
 package org.folio.rest.impl;
 
-import org.folio.codex.inventory.DiagnosticUtil;
 import org.folio.codex.inventory.InstanceConvert;
 import org.folio.codex.inventory.LHeaders;
 import io.vertx.core.AsyncResult;
@@ -167,12 +166,9 @@ public class CodexInvImpl implements CodexInstancesResource {
     }
   }
 
-  private void getByQuery(Context vertxContext, String query,
-    int offset, int limit, LHeaders okapiHeaders, InstanceCollection col,
-    Handler<AsyncResult<Void>> fut) {
+  private void getQueryUrl(String query, int offset, int limit,
+    LHeaders okapiHeaders, Handler<AsyncResult<String>> fut) {
 
-    logger.info("getByQuery query=" + query);
-    HttpClient client = vertxContext.owner().createHttpClient();
     String url = okapiHeaders.get(XOkapiHeaders.URL) + "/instance-storage/instances?"
       + "offset=" + offset + "&limit=" + limit;
     if (query != null) {
@@ -186,18 +182,23 @@ public class CodexInvImpl implements CodexInstancesResource {
         fut.handle(Future.failedFuture(ex));
         return;
       } catch (CQLParseException ex) {
-        DiagnosticUtil.add(col, "cql parse error", ex.getMessage());
+        fut.handle(Future.failedFuture("cql parse error: " + ex.getMessage()));
+        return;
       } catch (IllegalArgumentException ex) {
-        DiagnosticUtil.add(col, "cql", ex.getMessage());
+        fut.handle(Future.failedFuture("cql: " + ex.getMessage()));
+        return;
       } catch (UnknownIndexException ex) {
-        DiagnosticUtil.add(col, "unknown index", ex.getMessage());
+        fut.handle(Future.failedFuture("unknown index: " + ex.getMessage()));
+        return;
       } catch (UnknownRelationModifierException ex) {
-        DiagnosticUtil.add(col, "unknown relation modifier", ex.getMessage());
+        fut.handle(Future.failedFuture("unknown relation modifier: " + ex.getMessage()));
+        return;
       } catch (UnknownRelationException ex) {
-        DiagnosticUtil.add(col, "unknown relation", ex.getMessage());
+        fut.handle(Future.failedFuture("unknown relation" + ex.getMessage()));
+        return;
       }
       if (qn == null) { // not this source or diagnostic
-        fut.handle(Future.succeededFuture());
+        fut.handle(Future.succeededFuture(""));
         return;
       }
       final String query2 = qn.toCQL();
@@ -209,7 +210,15 @@ public class CodexInvImpl implements CodexInstancesResource {
         return;
       }
     }
+    fut.handle(Future.succeededFuture(url));
+  }
+
+  private void getByQuery(Context vertxContext, String url,
+    LHeaders okapiHeaders, InstanceCollection col,
+    Handler<AsyncResult<Void>> fut) {
+
     logger.info("getByQuery url=" + url);
+    HttpClient client = vertxContext.owner().createHttpClient();
     getUrl(url, client, okapiHeaders, res -> {
       if (res.failed()) {
         logger.warn("getByQuery. getUrl failed " + res.cause());
@@ -228,7 +237,8 @@ public class CodexInvImpl implements CodexInstancesResource {
         try {
           InstanceConvert.invToCollection(j, col, idMaps, "local");
         } catch (Exception ex) {
-          DiagnosticUtil.add(col, "record conversion error", ex.getMessage());
+          fut.handle(Future.failedFuture("record conversion error: " + ex.getMessage()));
+          return;
         }
         fut.handle(Future.succeededFuture());
       }
@@ -264,8 +274,8 @@ public class CodexInvImpl implements CodexInstancesResource {
   @Validate
   @Override
   public void getCodexInstances(String query, int offset, int limit, String lang,
-          Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> handler,
-          Context vertxContext) throws Exception {
+    Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> handler,
+    Context vertxContext) throws Exception {
 
     logger.info("GetCodexInstances");
     LHeaders lHeaders = new LHeaders(okapiHeaders);
@@ -275,17 +285,29 @@ public class CodexInvImpl implements CodexInstancesResource {
         handler.handle(Future.succeededFuture(
           CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res1.cause().getMessage())));
       } else {
-        InstanceCollection col = new InstanceCollection();
-        ResultInfo resultInfo = new ResultInfo();
-        resultInfo.setTotalRecords(0);
-        col.setResultInfo(resultInfo);
-        getByQuery(vertxContext, query, offset, limit, lHeaders, col, res2 -> {
+        getQueryUrl(query, offset, limit, lHeaders, res2 -> {
           if (res2.failed()) {
             handler.handle(Future.succeededFuture(
-              CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res2.cause().getMessage())));
+              CodexInstancesResource.GetCodexInstancesResponse.withPlainBadRequest(res2.cause().getMessage())));
           } else {
-            handler.handle(Future.succeededFuture(
-              CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
+            InstanceCollection col = new InstanceCollection();
+            ResultInfo resultInfo = new ResultInfo();
+            resultInfo.setTotalRecords(0);
+            col.setResultInfo(resultInfo);
+            if (res2.result().isEmpty()) {
+              handler.handle(Future.succeededFuture(
+                CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
+            } else {
+              getByQuery(vertxContext, res2.result(), lHeaders, col, res3 -> {
+                if (res3.failed()) {
+                  handler.handle(Future.succeededFuture(
+                    CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res3.cause().getMessage())));
+                } else {
+                  handler.handle(Future.succeededFuture(
+                    CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
+                }
+              });
+            }
           }
         });
       }
