@@ -262,8 +262,8 @@ public class CodexInvImpl implements CodexInstancesResource {
 
   @Override
   public void getCodexInstances(String query, int offset, int limit, String lang,
-          Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> handler,
-          Context vertxContext) throws Exception {
+    Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> handler,
+    Context vertxContext) throws Exception {
 
     logger.info("GetCodexInstances");
     LHeaders lHeaders = new LHeaders(okapiHeaders);
@@ -277,15 +277,25 @@ public class CodexInvImpl implements CodexInstancesResource {
         ResultInfo resultInfo = new ResultInfo();
         resultInfo.setTotalRecords(0);
         col.setResultInfo(resultInfo);
-        getByQuery(vertxContext, query, offset, limit, lHeaders, col, res2 -> {
-          if (res2.failed()) {
-            handler.handle(Future.succeededFuture(
-              CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res2.cause().getMessage())));
-          } else {
-            handler.handle(Future.succeededFuture(
-              CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
-          }
-        });
+        if (limit < 0) {
+          handler.handle(Future.succeededFuture(
+            CodexInstancesResource.GetCodexInstancesResponse.withPlainBadRequest(
+              "bad limit: " + Integer.toString(limit))));
+        } else if (offset < 0) {
+          handler.handle(Future.succeededFuture(
+            CodexInstancesResource.GetCodexInstancesResponse.withPlainBadRequest(
+              "bad offset: " + Integer.toString(offset))));
+        } else {
+          getByQuery(vertxContext, query, offset, limit, lHeaders, col, res2 -> {
+            if (res2.failed()) {
+              handler.handle(Future.succeededFuture(
+                CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res2.cause().getMessage())));
+            } else {
+              handler.handle(Future.succeededFuture(
+                CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
+            }
+          });
+        }
       }
     });
   }
