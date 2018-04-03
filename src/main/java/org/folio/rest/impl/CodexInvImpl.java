@@ -170,7 +170,7 @@ public class CodexInvImpl implements CodexInstancesResource {
           }
         });
     } else if (idMaps.getShelfLocationMap().isEmpty()) {
-      getMap(context, headers, idMaps.getShelfLocationMap(), "/shelf-locations", "shelflocations",
+      getMap(context, headers, idMaps.getShelfLocationMap(), "/locations", "locations",
         res -> {
           if (res.succeeded()) {
             getMaps(context, headers, fut);

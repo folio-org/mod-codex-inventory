@@ -82,7 +82,7 @@ public class CodexInventoryTest {
     router.get("/instance-types").handler(this::handlerInstanceTypes);
     router.get("/instance-formats").handler(this::handlerInstanceFormats);
     router.get("/identifier-types").handler(this::handlerIdentifierTypes);
-    router.get("/shelf-locations").handler(this::handlerShelfLocations);
+    router.get("/locations").handler(this::handlerShelfLocations);
 
     HttpServerOptions so = new HttpServerOptions().setHandle100ContinueAutomatically(true);
     vertx.createHttpServer(so)
@@ -258,6 +258,9 @@ public class CodexInventoryTest {
           JsonObject r = new JsonObject();
           r.put("id", entry.getKey());
           r.put("name", entry.getValue());
+          if ("locations".equals(n)) { // simulate more elements for locations
+            r.put("code", entry.getKey());
+          }
           a.add(r);
         }
         pos++;
@@ -365,7 +368,7 @@ public class CodexInventoryTest {
     map.put("758258bc-ecc1-41b8-abca-f7b610822ffd", "ORWIG ETHNO CD");
     map.put("f34d27c6-a8eb-461b-acd6-5dea81771e70", "SECOND FLOOR");
     map.put("53cf956f-c1df-410b-8bea-27f712cca7c0", "Annex");
-    handleTypeMaps(ctx, map, "shelflocations");
+    handleTypeMaps(ctx, map, "locations");
   }
 
   @After
@@ -453,21 +456,21 @@ public class CodexInventoryTest {
     context.assertEquals(17, j.getInteger("totalRecords"));
 
     r = RestAssured.given()
-      .get("/shelf-locations?offset=1&limit=2")
+      .get("/locations?offset=1&limit=2")
       .then()
       .log().ifValidationFails()
       .statusCode(200).extract().response();
     b = r.getBody().asString();
     j = new JsonObject(b);
     context.assertEquals(5, j.getInteger("totalRecords"));
-    context.assertEquals(2, j.getJsonArray("shelflocations").size());
+    context.assertEquals(2, j.getJsonArray("locations").size());
 
     context.assertEquals("b241764c-1466-4e1d-a028-1a3684a5da87",
-      j.getJsonArray("shelflocations").getJsonObject(0).getString("id"));
+      j.getJsonArray("locations").getJsonObject(0).getString("id"));
     context.assertEquals("Popular Reading Collection",
-      j.getJsonArray("shelflocations").getJsonObject(0).getString("name"));
+      j.getJsonArray("locations").getJsonObject(0).getString("name"));
     context.assertEquals("ORWIG ETHNO CD",
-      j.getJsonArray("shelflocations").getJsonObject(1).getString("name"));
+      j.getJsonArray("locations").getJsonObject(1).getString("name"));
   }
 
   @Test
@@ -542,7 +545,7 @@ public class CodexInventoryTest {
       .statusCode(500).extract().response();
     b = r.getBody().asString();
 
-    failMap = "shelflocations";
+    failMap = "locations";
     r = RestAssured.given()
       .header(tenantHeader)
       .header(urlHeader)
