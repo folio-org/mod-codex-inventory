@@ -71,6 +71,7 @@ public class QueryConvertTest {
     assertEquals("a", conv("a and source=local"));
     assertEquals("a", conv("ext.selected = foo and a and source=local"));
     assertEquals("a", conv("a and ext.selected = foo and source=local"));
+    assertEquals("Error: query has ext.selected clause only", conv("ext.selected = foo and source=local"));
     assertEquals("(a) and (b)", conv("a and (source=local) and b"));
     assertEquals("title = a* sortby title", conv("(title=a*) and source=(kb or local) sortby title"));
     assertEquals("title = a* sortby title", conv("(title=a*) and source=(1 or 2 or 3 or 4 or 5 or local) sortby title"));
