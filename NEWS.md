@@ -1,3 +1,13 @@
+## 1.1.0 2018-04-10
+
+ * MODCXINV-19 New new locations for filtering
+ * MODCXINV-20 codex-instance/id endpoint should return 401 instead of 500
+ * MODCXINV-21 Fix code smells as reported by SQ
+ * MODCXINV-22 /codex-instance?limit=1 should return 400 instead of 500
+ * MODCXINV-23 /codex-instance/lang=123 should return 400 instead of 200
+ * MODCXINV-24 SQ fixes
+ * MODCXINV-25 Fix invalid UUIDs
+
 ## 1.0.3 2018-03-13
 
  * MODCXINV-16 Improve test coverage
