@@ -12,7 +12,7 @@
     } ],
     "creators" : [ {
       "name" : "Fielding, Helen",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     } ],
     "contributors" : [ ],
     "subjects" : [ "Jones, Bridget", "Pregnant women", "England", "Humorous fiction", "Diary fiction" ],
@@ -26,7 +26,7 @@
       "dateOfPublication" : "2016"
     } ],
     "urls" : [ ],
-    "instanceTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2c",
+    "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
     "physicalDescriptions" : [ "219 pages ; 20 cm." ],
     "languages" : [ "eng" ],
     "notes" : [ "Bridget Jones finds herself unexpectedly pregnant at the eleventh hour. However, her joyful pregnancy is dominated by one crucial but awkward question --who is the father? Could it be honorable, decent, notable human rights lawyer, Mark Darcy? Or, is it charming, witty, and totally despicable, Daniel Cleaver?" ]
@@ -42,17 +42,17 @@
     } ],
     "creators" : [ {
       "name" : "Creator A",
-      "creatorTypeId" : "2e48e713-17f3-7c13-09f8-23845bb210aa"
+      "creatorTypeId" : "2e48e713-17f3-4c13-a9f8-23845bb210aa"
     }, {
       "name" : "Creator B",
-      "creatorTypeId" : "e8b311a6-3b21-03f2-2269-dd9310cb2d0a"
+      "creatorTypeId" : "e8b311a6-3b21-43f2-a269-dd9310cb2d0a"
     } ],
     "contributors" : [ ],
     "subjects" : [ ],
     "classifications" : [ ],
     "publication" : [ ],
     "urls" : [ ],
-    "instanceTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2c",
+    "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -71,14 +71,14 @@
     } ],
     "creators" : [ {
       "name" : "Pratchett, Terry",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     } ],
     "contributors" : [ ],
     "subjects" : [ ],
     "classifications" : [ ],
     "publication" : [ ],
     "urls" : [ ],
-    "instanceTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2c",
+    "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -97,14 +97,14 @@
     } ],
     "creators" : [ {
       "name" : "Barnes, Adrian",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     } ],
     "contributors" : [ ],
     "subjects" : [ ],
     "classifications" : [ ],
     "publication" : [ ],
     "urls" : [ ],
-    "instanceTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2c",
+    "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -123,14 +123,14 @@
     } ],
     "creators" : [ {
       "name" : "Novik, Naomi",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     } ],
     "contributors" : [ ],
     "subjects" : [ ],
     "classifications" : [ ],
     "publication" : [ ],
     "urls" : [ ],
-    "instanceTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2c",
+    "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -158,11 +158,11 @@
     } ],
     "creators" : [ {
       "name" : "Sosa, Omar, composer, performer.",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     } ],
     "contributors" : [ {
       "name" : "Keita, Seckou, 1977- composer, performer.",
-      "contributorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2b"
+      "contributorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2b"
     } ],
     "subjects" : [ "World music.", "Jazz" ],
     "classifications" : [ {
@@ -175,7 +175,7 @@
       "dateOfPublication" : "[2017]"
     } ],
     "urls" : [ ],
-    "instanceTypeId" : "2e48e713-17f3-7c13-09f8-23845bb210ac",
+    "instanceTypeId" : "2e48e713-17f3-4c13-a9f8-23845bb210ac",
     "instanceFormatId" : "309c3a3d-d54c-4519-b978-2c5c2de78d95",
     "physicalDescriptions" : [ "1 audio disc: digital; 4 3/4 in." ],
     "languages" : [ "und" ],
@@ -192,14 +192,14 @@
     } ],
     "creators" : [ {
       "name" : "Huntley, Henry Veel",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     } ],
     "contributors" : [ ],
     "subjects" : [ ],
     "classifications" : [ ],
     "publication" : [ ],
     "urls" : [ ],
-    "instanceTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2c",
+    "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -215,14 +215,14 @@
     } ],
     "creators" : [ {
       "name" : "MABIL, Pier Luigi.",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     } ],
     "contributors" : [ ],
     "subjects" : [ ],
     "classifications" : [ ],
     "publication" : [ ],
     "urls" : [ ],
-    "instanceTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2c",
+    "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -241,17 +241,17 @@
     } ],
     "creators" : [ {
       "name" : "Nikitović, Pavle",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     }, {
       "name" : "Božović, Ratko.",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     } ],
     "contributors" : [ ],
     "subjects" : [ ],
     "classifications" : [ ],
     "publication" : [ ],
     "urls" : [ ],
-    "instanceTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2c",
+    "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -273,14 +273,14 @@
     } ],
     "creators" : [ {
       "name" : "Marshall, Cynthia.",
-      "creatorTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2a"
+      "creatorTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2a"
     } ],
     "contributors" : [ ],
     "subjects" : [ ],
     "classifications" : [ ],
     "publication" : [ ],
     "urls" : [ ],
-    "instanceTypeId" : "2b94c631-fca9-a892-c730-03ee529ffe2c",
+    "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
