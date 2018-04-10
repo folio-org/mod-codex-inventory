@@ -124,13 +124,13 @@ public class CodexInventoryTest {
     + "    } ],\n"
     + "    \"contributors\" : [ {\n"
     + "      \"name\" : \"Sosa, Omar\",\n"
-    + "      \"contributorTypeId\" : \"2b94c631-fca9-a892-c730-03ee529ffe2b\",\n"
-    + "      \"contributorNameTypeId\" : \"2b94c631-fca9-a892-c730-03ee529ffe2a\",\n"
+    + "      \"contributorTypeId\" : \"2b94c631-fca9-4892-a730-03ee529ffe2b\",\n"
+    + "      \"contributorNameTypeId\" : \"2b94c631-fca9-4892-a730-03ee529ffe2a\",\n"
     + "      \"primary\" : true\n"
     + "    }, {\n"
     + "      \"name\" : \"Keita, Seckou, 1977-\",\n"
-    + "      \"contributorTypeId\" : \"2b94c631-fca9-a892-c730-03ee529ffe2b\",\n"
-    + "      \"contributorNameTypeId\" : \"2b94c631-fca9-a892-c730-03ee529ffe2a\",\n"
+    + "      \"contributorTypeId\" : \"2b94c631-fca9-4892-a730-03ee529ffe2b\",\n"
+    + "      \"contributorNameTypeId\" : \"2b94c631-fca9-4892-a730-03ee529ffe2a\",\n"
     + "      \"primary\" : false\n"
     + "    } ],\n"
     + "    \"subjects\" : [ \"World music.\", \"Jazz\" ],\n"
@@ -144,7 +144,7 @@ public class CodexInventoryTest {
     + "      \"dateOfPublication\" : \"[2017]\"\n"
     + "    } ],\n"
     + "    \"urls\" : [ ],\n"
-    + "    \"instanceTypeId\" : \"2e48e713-17f3-7c13-09f8-23845bb210ac\",\n"
+    + "    \"instanceTypeId\" : \"2e48e713-17f3-4c13-a9f8-23845bb210ac\",\n"
     + "    \"instanceFormatId\" : \"309c3a3d-d54c-4519-b978-2c5c2de78d95\",\n"
     + "    \"physicalDescriptions\" : [ \"1 audio disc: digital; 4 3/4 in.\" ],\n"
     + "    \"languages\" : [ \"und\" ],\n"
@@ -290,18 +290,18 @@ public class CodexInventoryTest {
 
   private void handlerContributorNameTypes(RoutingContext ctx) {
     Map<String, String> map = new LinkedHashMap<>();
-    map.put("e8b311a6-3b21-03f2-2269-dd9310cb2d0a", "Meeting name");
-    map.put("2b94c631-fca9-a892-c730-03ee529ffe2a", "Personal name");
-    map.put("2e48e713-17f3-7c13-09f8-23845bb210aa", "Corporate name");
+    map.put("e8b311a6-3b21-43f2-a269-dd9310cb2d0a", "Meeting name");
+    map.put("2b94c631-fca9-4892-a730-03ee529ffe2a", "Personal name");
+    map.put("2e48e713-17f3-4c13-a9f8-23845bb210aa", "Corporate name");
     handleTypeMaps(ctx, map, "contributorNameTypes");
   }
 
   private void handlerInstanceTypes(RoutingContext ctx) {
     Map<String, String> map = new LinkedHashMap<>();
-    map.put("e8b311a6-3b21-03f2-2269-dd9310cb2d0c", "Mixed Material");
+    map.put("e8b311a6-3b21-43f2-a269-dd9310cb2d0c", "Mixed Material");
     map.put("53571e16-2277-4252-9d60-7ec31850672c", "Web Resources");
     map.put("a385b165-b103-4436-bbb3-02f9ef6f8a2c", "Spoken Record");
-    map.put("2b94c631-fca9-a892-c730-03ee529ffe2c", "Books");
+    map.put("2b94c631-fca9-4892-a730-03ee529ffe2c", "Books");
     map.put("c2e873be-4c99-4070-9133-76314941e166", "Music (MMS)");
     map.put("ac011474-5e2c-49d4-a6aa-42193cbd8213", "Charts Posters");
     map.put("d02e6f4b-be20-44eb-b500-daa49eef0c3a", "Error");
@@ -309,7 +309,7 @@ public class CodexInventoryTest {
     map.put("20d12382-98a6-4e3a-ba50-dc35445b35c0", "Kits");
     map.put("85c58579-a833-4624-904a-754973374679", "Videorecording");
     map.put("1b492cb2-326e-4a9c-8904-f49d5fe193fb", "Old Code");
-    map.put("2e48e713-17f3-7c13-09f8-23845bb210ac", "Music (Audio)");
+    map.put("2e48e713-17f3-4c13-a9f8-23845bb210ac", "Music (Audio)");
     map.put("a56c42e2-8b57-47d6-bb93-aa6267c28fb4", "Theses");
     map.put("a35947c6-795f-41d4-9c34-e5668d925d3f", "Serials");
     map.put("447bea04-0b30-4f0d-8841-a9164ee5d9cb", "eBooks");
