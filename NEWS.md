@@ -1,3 +1,7 @@
+## 1.2.0 Unreleased
+
+ * MODCXINV-28 Update dependencies, instance-types (2.0), instance-formats (2.0)
+
 ## 1.1.0 2018-04-10
 
  * MODCXINV-19 New new locations for filtering
