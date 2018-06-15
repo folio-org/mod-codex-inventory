@@ -19,23 +19,31 @@ public class ResourceTypes {
   List<InstanceMap> l = new LinkedList<>();
 
   ResourceTypes() {
-    l.add(new InstanceMap("Spoken Record", Instance.Type.AUDIO));
-    l.add(new InstanceMap("Books", Instance.Type.BOOKS));
-    l.add(new InstanceMap("Computer Files", Instance.Type.DATABASES));
-    l.add(new InstanceMap("eBooks", Instance.Type.EBOOKS));
-    l.add(new InstanceMap("3-D Objects", Instance.Type.KITS));
-    l.add(new InstanceMap("Kits", Instance.Type.KITS));
-    l.add(new InstanceMap("Mixed Material", Instance.Type.KITS));
-    l.add(new InstanceMap("Maps", Instance.Type.MAPS));
-    l.add(new InstanceMap("Music (Audio)", Instance.Type.MUSIC));
-    l.add(new InstanceMap("Music (MSS)", Instance.Type.MUSIC));
-    l.add(new InstanceMap("Music (Scores)", Instance.Type.MUSIC));
-    l.add(new InstanceMap("Serials", Instance.Type.PERIODICALS));
-    l.add(new InstanceMap("Charts Posters", Instance.Type.POSTERS));
-    l.add(new InstanceMap("Theses", Instance.Type.THESISANDDISSERTATION));
-    l.add(new InstanceMap("Error", Instance.Type.UNSPECIFIED));
-    l.add(new InstanceMap("Videorecording", Instance.Type.VIDEO));
-    l.add(new InstanceMap("Web Resources", Instance.Type.WEBRESOURCES));
+    l.add(new InstanceMap("cartographic dataset", Instance.Type.MAPS));
+    l.add(new InstanceMap("cartographic image", Instance.Type.MAPS));
+    l.add(new InstanceMap("cartographic moving image", Instance.Type.MAPS));
+    l.add(new InstanceMap("cartographic tactile image", Instance.Type.MAPS));
+    l.add(new InstanceMap("cartographic tactile three-dimensional form", Instance.Type.MAPS));
+    l.add(new InstanceMap("cartographic three-dimensional form", Instance.Type.MAPS));
+    l.add(new InstanceMap("computer dataset", Instance.Type.DATABASES));
+    l.add(new InstanceMap("computer program", Instance.Type.DATABASES));
+    l.add(new InstanceMap("notated movement", Instance.Type.KITS));
+    l.add(new InstanceMap("tactile notated music", Instance.Type.MUSIC));
+    l.add(new InstanceMap("notated music", Instance.Type.MUSIC));
+    l.add(new InstanceMap("performed music", Instance.Type.MUSIC));
+    l.add(new InstanceMap("sounds", Instance.Type.AUDIO));
+    l.add(new InstanceMap("spoken word", Instance.Type.AUDIO));
+    l.add(new InstanceMap("still image", Instance.Type.KITS));
+    l.add(new InstanceMap("tactile image", Instance.Type.KITS));
+    l.add(new InstanceMap("tactile notated movement", Instance.Type.KITS));
+    l.add(new InstanceMap("tactile text", Instance.Type.BOOKS));
+    l.add(new InstanceMap("taxtile three-dimensional form", Instance.Type.KITS));
+    l.add(new InstanceMap("text", Instance.Type.BOOKS));
+    l.add(new InstanceMap("three-dimensional form", Instance.Type.KITS));
+    l.add(new InstanceMap("three-dimensional moving image", Instance.Type.VIDEO));
+    l.add(new InstanceMap("two dimensional moving image", Instance.Type.VIDEO));
+    l.add(new InstanceMap("other", Instance.Type.UNSPECIFIED));
+    l.add(new InstanceMap("unspecified", Instance.Type.UNSPECIFIED));
   }
 
   Instance.Type toType(String n) {
