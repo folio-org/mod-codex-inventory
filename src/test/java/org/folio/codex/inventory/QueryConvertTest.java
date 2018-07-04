@@ -14,11 +14,11 @@ public class QueryConvertTest {
     idMaps.getShelfLocationMap().put("02", "loc1");
     idMaps.getShelfLocationMap().put("03", "loc2");
     idMaps.getShelfLocationMap().put("04", "loc2");
-    idMaps.getInstanceTypeMap().put("10", "Spoken Record");
-    idMaps.getInstanceTypeMap().put("11", "Books");
-    idMaps.getInstanceTypeMap().put("12", "Music (Audio)");
-    idMaps.getInstanceTypeMap().put("13", "Music (MSS)");
-    idMaps.getInstanceTypeMap().put("14", "Music (Scores)");
+    idMaps.getInstanceTypeMap().put("10", "spoken word");
+    idMaps.getInstanceTypeMap().put("11", "text");
+    idMaps.getInstanceTypeMap().put("12", "tactile notated music");
+    idMaps.getInstanceTypeMap().put("13", "notated music");
+    idMaps.getInstanceTypeMap().put("14", "performed music");
 
 
     CQLParser parser = new CQLParser(CQLParser.V1POINT2);

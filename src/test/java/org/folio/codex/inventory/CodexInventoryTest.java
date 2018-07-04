@@ -298,24 +298,32 @@ public class CodexInventoryTest {
 
   private void handlerInstanceTypes(RoutingContext ctx) {
     Map<String, String> map = new LinkedHashMap<>();
-    map.put("e8b311a6-3b21-43f2-a269-dd9310cb2d0c", "Mixed Material");
-    map.put("53571e16-2277-4252-9d60-7ec31850672c", "Web Resources");
-    map.put("a385b165-b103-4436-bbb3-02f9ef6f8a2c", "Spoken Record");
-    map.put("2b94c631-fca9-4892-a730-03ee529ffe2c", "Books");
-    map.put("c2e873be-4c99-4070-9133-76314941e166", "Music (MMS)");
-    map.put("ac011474-5e2c-49d4-a6aa-42193cbd8213", "Charts Posters");
-    map.put("d02e6f4b-be20-44eb-b500-daa49eef0c3a", "Error");
-    map.put("c2677271-188e-46c2-9593-71ba82b901e4", "Music (Scores)");
-    map.put("20d12382-98a6-4e3a-ba50-dc35445b35c0", "Kits");
-    map.put("85c58579-a833-4624-904a-754973374679", "Videorecording");
-    map.put("1b492cb2-326e-4a9c-8904-f49d5fe193fb", "Old Code");
-    map.put("2e48e713-17f3-4c13-a9f8-23845bb210ac", "Music (Audio)");
-    map.put("a56c42e2-8b57-47d6-bb93-aa6267c28fb4", "Theses");
-    map.put("a35947c6-795f-41d4-9c34-e5668d925d3f", "Serials");
-    map.put("447bea04-0b30-4f0d-8841-a9164ee5d9cb", "eBooks");
-    map.put("e2f217ff-95ba-47d7-9150-b044f275e06e", "Maps");
-    map.put("4c72d83d-2625-4bde-8209-93abe245362e", "Computer Files");
-    map.put("464102a7-1527-4bd6-9bca-886597cebf29", "3-D Objects");
+    map.put("3363cdb1-e644-446c-82a4-dc3a1d4395b9", "cartographic dataset");
+    map.put("526aa04d-9289-4511-8866-349299592c18", "cartographic image");
+    map.put("80c0c134-0240-4b63-99d0-6ca755d5f433", "cartographic moving image");
+    map.put("408f82f0-e612-4977-96a1-02076229e312", "cartographic tactile image");
+    map.put("e5136fa2-1f19-4581-b005-6e007a940ca8", "cartographic tactile three-dimensional form");
+    map.put("2022aa2e-bdde-4dc4-90bc-115e8894b8b3", "cartographic three-dimensional form");
+    map.put("df5dddff-9c30-4507-8b82-119ff972d4d7", "computer dataset");
+    map.put("c208544b-9e28-44fa-a13c-f4093d72f798", "computer program");
+    map.put("fbe264b5-69aa-4b7c-a230-3b53337f6440", "notated movement");
+    map.put("497b5090-3da2-486c-b57f-de5bb3c2e26d", "notated music");
+    map.put("3be24c14-3551-4180-9292-26a786649c8b", "performed music");
+    map.put("9bce18bd-45bf-4949-8fa8-63163e4b7d7f", "sounds");
+    map.put("c7f7446f-4642-4d97-88c9-55bae2ad6c7f", "spoken word");
+    map.put("535e3160-763a-42f9-b0c0-d8ed7df6e2a2", "still image");
+    map.put("efe2e89b-0525-4535-aa9b-3ff1a131189e", "tactile image");
+    map.put("2e48e713-17f3-4c13-a9f8-23845bb210ac", "tactile notated music");
+    map.put("e6a278fb-565a-4296-a7c5-8eb63d259522", "tactile notated movement");
+    map.put("8105bd44-e7bd-487e-a8f2-b804a361d92f", "tactile text");
+    map.put("82689e16-629d-47f7-94b5-d89736cf11f2", "tactile three-dimensional form");
+    map.put("6312d172-f0cf-40f6-b27d-9fa8feaf332f", "text");
+    map.put("c1e95c2b-4efc-48cf-9e71-edb622cf0c22", "three-dimensional form");
+    map.put("3e3039b7-fda0-4ac4-885a-022d457cb99c", "three-dimensional moving image");
+    map.put("225faa14-f9bf-4ecd-990d-69433c912434", "two-dimensional moving image");
+    map.put("a2c91e87-6bab-44d6-8adb-1fd02481fc4f", "other");
+    map.put("30fffe0e-e985-4144-b2e2-1e8179bdb41f", "unspecified");
+
     handleTypeMaps(ctx, map, "instanceTypes");
   }
 
@@ -435,7 +443,7 @@ public class CodexInventoryTest {
       .statusCode(200).extract().response();
     b = r.getBody().asString();
     j = new JsonObject(b);
-    context.assertEquals(18, j.getInteger("totalRecords"));
+    context.assertEquals(25, j.getInteger("totalRecords"));
 
     r = RestAssured.given()
       .get("/instance-formats")

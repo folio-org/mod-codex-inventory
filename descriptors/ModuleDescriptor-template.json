@@ -12,11 +12,11 @@
     },
     {
       "id": "instance-types",
-      "version": "1.0"
+      "version": "1.0 2.0"
     },
     {
       "id": "instance-formats",
-      "version": "1.0"
+      "version": "1.0 2.0"
     },
     {
       "id": "identifier-types",
