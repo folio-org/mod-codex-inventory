@@ -1,6 +1,6 @@
 #!/bin/sh
 # Script that runs this module against the folio/testing box
-# We run this module locally and calls ther other modules inside the box
+# We run this module locally and calls the other modules inside the box
 set -x
 OKAPIURL=http://localhost:9130
 
