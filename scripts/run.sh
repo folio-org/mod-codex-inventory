@@ -12,7 +12,7 @@ cat > login.json <<END
 {
   "username" : "diku_admin",
   "password" : "admin"
-} 
+}
 END
 curl -s -D login.res -o login.txt -HContent-Type:application/json -HX-Okapi-Tenant:diku -XPOST -d@login.json http://localhost:9130/authn/login
 TOK=`grep -i x-okapi-token login.res`
