@@ -25,7 +25,7 @@ import org.folio.rest.annotations.Validate;
 import org.folio.rest.jaxrs.model.Instance;
 import org.folio.rest.jaxrs.model.InstanceCollection;
 import org.folio.rest.jaxrs.model.ResultInfo;
-import org.folio.rest.jaxrs.resource.CodexInstancesResource;
+import org.folio.rest.jaxrs.resource.CodexInstances;
 import org.z3950.zing.cql.CQLNode;
 import org.z3950.zing.cql.CQLParseException;
 import org.z3950.zing.cql.CQLParser;
@@ -33,7 +33,7 @@ import org.z3950.zing.cql.UnknownIndexException;
 import org.z3950.zing.cql.UnknownRelationException;
 import org.z3950.zing.cql.UnknownRelationModifierException;
 
-public class CodexInvImpl implements CodexInstancesResource {
+public class CodexInvImpl implements CodexInstances {
 
   private class HttpError401 extends Throwable {
 
@@ -298,23 +298,23 @@ public class CodexInvImpl implements CodexInstancesResource {
     col.setResultInfo(resultInfo);
     if (res2.result().isEmpty()) {
       handler.handle(Future.succeededFuture(
-        CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
+      CodexInstances.GetCodexInstancesResponse.respond200WithApplicationJson(col)));
     } else {
       getByQuery(vertxContext, res2.result(), lHeaders, col, res3 -> {
         if (res3.failed()) {
           if (res3.cause() instanceof HttpError401) {
             handler.handle(Future.succeededFuture(
-              CodexInstancesResource.GetCodexInstancesResponse.withPlainUnauthorized("")));
+              CodexInstances.GetCodexInstancesResponse.respond401WithTextPlain("")));
           } else if (res3.cause() instanceof HttpError400) {
             handler.handle(Future.succeededFuture(
-              CodexInstancesResource.GetCodexInstancesResponse.withPlainBadRequest("")));
+              CodexInstances.GetCodexInstancesResponse.respond400WithTextPlain("")));
           } else {
             handler.handle(Future.succeededFuture(
-              CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res3.cause().getMessage())));
+              CodexInstances.GetCodexInstancesResponse.respond500WithTextPlain(res3.cause().getMessage())));
           }
         } else {
           handler.handle(Future.succeededFuture(
-            CodexInstancesResource.GetCodexInstancesResponse.withJsonOK(col)));
+            CodexInstances.GetCodexInstancesResponse.respond200WithApplicationJson(col)));
         }
       });
     }
@@ -324,7 +324,7 @@ public class CodexInvImpl implements CodexInstancesResource {
   @Override
   public void getCodexInstances(String query, int offset, int limit, String lang,
     Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> handler,
-    Context vertxContext) throws Exception {
+    Context vertxContext) {
 
     logger.info("GetCodexInstances");
     LHeaders lHeaders = new LHeaders(okapiHeaders);
@@ -332,12 +332,12 @@ public class CodexInvImpl implements CodexInstancesResource {
     getMaps(vertxContext, lHeaders, res1 -> {
       if (res1.failed()) {
         handler.handle(Future.succeededFuture(
-          CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res1.cause().getMessage())));
+          CodexInstances.GetCodexInstancesResponse.respond500WithTextPlain(res1.cause().getMessage())));
       } else {
         getQueryUrl(query, offset, limit, lHeaders, res2 -> {
           if (res2.failed()) {
             handler.handle(Future.succeededFuture(
-              CodexInstancesResource.GetCodexInstancesResponse.withPlainBadRequest(res2.cause().getMessage())));
+              CodexInstances.GetCodexInstancesResponse.respond400WithTextPlain(res2.cause().getMessage())));
           } else {
             getCodexInstances2(res2, vertxContext, lHeaders, handler);
           }
@@ -350,37 +350,37 @@ public class CodexInvImpl implements CodexInstancesResource {
   @Override
   public void getCodexInstancesById(String id, String lang,
     Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> handler,
-    Context vertxContext) throws Exception {
+    Context vertxContext) {
 
     logger.info("GetCodexInstancesById");
     if (!id.matches("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$")) {
       handler.handle(Future.succeededFuture(
-        CodexInstancesResource.GetCodexInstancesByIdResponse.withPlainNotFound(id)));
+        CodexInstances.GetCodexInstancesByIdResponse.respond404WithTextPlain(id)));
       return;
     }
     LHeaders lHeaders = new LHeaders(okapiHeaders);
     getMaps(vertxContext, lHeaders, res1 -> {
       if (res1.failed()) {
         handler.handle(Future.succeededFuture(
-          CodexInstancesResource.GetCodexInstancesResponse.withPlainInternalServerError(res1.cause().getMessage())));
+          CodexInstances.GetCodexInstancesResponse.respond500WithTextPlain(res1.cause().getMessage())));
       } else {
         Instance instance = new Instance();
         getById(id, vertxContext, lHeaders, instance, res2 -> {
           if (res2.failed()) {
             if (res2.cause() instanceof HttpError401) {
               handler.handle(Future.succeededFuture(
-                CodexInstancesResource.GetCodexInstancesByIdResponse.withPlainUnauthorized(id)));
+                CodexInstances.GetCodexInstancesByIdResponse.respond401WithTextPlain(id)));
             } else {
               handler.handle(Future.succeededFuture(
-                CodexInstancesResource.GetCodexInstancesByIdResponse.withPlainInternalServerError(res2.cause().getMessage())));
+                CodexInstances.GetCodexInstancesByIdResponse.respond500WithTextPlain(res2.cause().getMessage())));
             }
           } else {
             if (instance.getId() == null) {
               handler.handle(Future.succeededFuture(
-                CodexInstancesResource.GetCodexInstancesByIdResponse.withPlainNotFound(id)));
+                CodexInstances.GetCodexInstancesByIdResponse.respond404WithTextPlain(id)));
             } else {
               handler.handle(Future.succeededFuture(
-                CodexInstancesResource.GetCodexInstancesByIdResponse.withJsonOK(instance)));
+                CodexInstances.GetCodexInstancesByIdResponse.respond200WithApplicationJson(instance)));
             }
           }
         });
