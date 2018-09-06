@@ -1,5 +1,6 @@
-## 1.2.0 Unreleased
+## 1.2.0 2018-09-06
 
+ * MODCXINV-31 Update to RAML 1.0
  * MODCXINV-28 Update resource type map with RDA content terms
  * MODCXINV-28 Update dependencies, instance-types (2.0), instance-formats (2.0)
 
