@@ -1,3 +1,7 @@
+## 1.2.1 2018-09-19
+
+ * MODCXINV-33 Fix bad pageable
+
 ## 1.2.0 2018-09-06
 
  * MODCXINV-31 Update to RAML 1.0
