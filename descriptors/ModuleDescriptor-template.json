@@ -4,7 +4,7 @@
   "requires": [
     {
       "id": "instance-storage",
-      "version": "4.0"
+      "version": "5.0"
     },
     {
       "id": "contributor-name-types",
@@ -30,7 +30,7 @@
   "provides": [
     {
       "id": "codex",
-      "version": "3.0",
+      "version": "3.1",
       "interfaceType": "multiple",
       "handlers": [
         {

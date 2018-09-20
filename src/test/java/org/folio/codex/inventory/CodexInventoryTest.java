@@ -1,8 +1,21 @@
 package org.folio.codex.inventory;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.folio.rest.RestVerticle;
+import org.folio.rest.jaxrs.model.Diagnostic;
+import org.folio.rest.jaxrs.model.Instance;
+import org.folio.rest.jaxrs.model.InstanceCollection;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
+
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerOptions;
@@ -16,16 +29,6 @@ import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import org.folio.rest.RestVerticle;
-import org.folio.rest.jaxrs.model.Diagnostic;
-import org.folio.rest.jaxrs.model.Instance;
-import org.folio.rest.jaxrs.model.InstanceCollection;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 @RunWith(VertxUnitRunner.class)
 public class CodexInventoryTest {
@@ -104,7 +107,7 @@ public class CodexInventoryTest {
     + "    \"source\" : \"Sample\",\n"
     + "    \"title\" : \"Transparent water\",\n"
     + "    \"alternativeTitles\" : [ \"alternative titles\" ],\n"
-    + "    \"edition\" : \"1st edition\",\n"
+    + "    \"editions\" : [ \"1st edition\" ],\n"
     + "    \"series\" : [ \"first series\" ],\n"
     + "    \"identifiers\" : [ {\n"
     + "      \"value\" : \"ocn968777846\",\n"

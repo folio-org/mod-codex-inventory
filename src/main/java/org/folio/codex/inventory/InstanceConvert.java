@@ -1,17 +1,19 @@
 package org.folio.codex.inventory;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.folio.okapi.common.OkapiLogger;
 import org.folio.rest.jaxrs.model.Contributor;
 import org.folio.rest.jaxrs.model.Identifier;
 import org.folio.rest.jaxrs.model.Instance;
 import org.folio.rest.jaxrs.model.InstanceCollection;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
 
 public class InstanceConvert {
 
@@ -57,13 +59,13 @@ public class InstanceConvert {
     mapIdentifiers(j, idMaps, instance);
     mapSource(instance, source);
     mapLanguages(j, instance);
-    mapEdition(j, instance);
+    mapEditions(j, instance);
   }
 
-  private static void mapEdition(JsonObject j, Instance instance) {
-    final String edition = j.getString("edition");
-    if (edition != null) {
-      instance.setVersion(edition);
+  private static void mapEditions(JsonObject j, Instance instance) {
+    JsonArray ar = j.getJsonArray("editions");
+    if (ar != null && ar.size() > 0) {
+      instance.setVersion(ar.getString(0));
     }
   }
 
