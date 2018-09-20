@@ -143,7 +143,7 @@ public class CodexInventoryTest {
     + "      \"place\" : \"[Place of publication not identified]: \",\n"
     + "      \"dateOfPublication\" : \"[2017]\"\n"
     + "    } ],\n"
-    + "    \"urls\" : [ ],\n"
+    + "    \"electronicAccess\" : [ ],\n"
     + "    \"instanceTypeId\" : \"2e48e713-17f3-4c13-a9f8-23845bb210ac\",\n"
     + "    \"instanceFormatId\" : \"309c3a3d-d54c-4519-b978-2c5c2de78d95\",\n"
     + "    \"physicalDescriptions\" : [ \"1 audio disc: digital; 4 3/4 in.\" ],\n"
