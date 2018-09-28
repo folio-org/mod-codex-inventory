@@ -1,17 +1,19 @@
 package org.folio.codex.inventory;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.folio.okapi.common.OkapiLogger;
 import org.folio.rest.jaxrs.model.Contributor;
 import org.folio.rest.jaxrs.model.Identifier;
 import org.folio.rest.jaxrs.model.Instance;
 import org.folio.rest.jaxrs.model.InstanceCollection;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
 
 public class InstanceConvert {
 
@@ -53,7 +55,7 @@ public class InstanceConvert {
     mapContributors(j, idMaps, instance);
     mapPublication(j, instance);
     mapInstanceTypeId(j, idMaps, instance);
-    mapInstanceFormatId(j, idMaps, instance);
+    mapInstanceFormatIds(j, idMaps, instance);
     mapIdentifiers(j, idMaps, instance);
     mapSource(instance, source);
     mapLanguages(j, instance);
@@ -103,9 +105,10 @@ public class InstanceConvert {
     }
   }
 
-  private static void mapInstanceFormatId(JsonObject j, IdMaps idMaps, Instance instance) {
-    final String id = j.getString("instanceFormatId");
-    if (id != null) {
+  private static void mapInstanceFormatIds(JsonObject j, IdMaps idMaps, Instance instance) {
+    JsonArray ar = j.getJsonArray("instanceFormatIds");
+    if (ar != null && ar.size() > 0) {
+      String id = ar.getString(0);
       final String format = idMaps.getInstanceFormatMap().get(id);
       if (format == null) {
         throw (new IllegalArgumentException("instanceFormatId " + id + " does not exist"));

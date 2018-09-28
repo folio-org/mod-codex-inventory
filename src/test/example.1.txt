@@ -27,6 +27,7 @@
     } ],
     "urls" : [ ],
     "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
+    "instanceFormatIds": [ ],
     "physicalDescriptions" : [ "219 pages ; 20 cm." ],
     "languages" : [ "eng" ],
     "notes" : [ "Bridget Jones finds herself unexpectedly pregnant at the eleventh hour. However, her joyful pregnancy is dominated by one crucial but awkward question --who is the father? Could it be honorable, decent, notable human rights lawyer, Mark Darcy? Or, is it charming, witty, and totally despicable, Daniel Cleaver?" ]
@@ -53,6 +54,7 @@
     "publication" : [ ],
     "urls" : [ ],
     "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
+    "instanceFormatIds": [ ],
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -79,6 +81,7 @@
     "publication" : [ ],
     "urls" : [ ],
     "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
+    "instanceFormatIds": [ ],
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -105,6 +108,7 @@
     "publication" : [ ],
     "urls" : [ ],
     "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
+    "instanceFormatIds": [ ],
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -131,6 +135,7 @@
     "publication" : [ ],
     "urls" : [ ],
     "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
+    "instanceFormatIds": [ ],
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -176,7 +181,7 @@
     } ],
     "urls" : [ ],
     "instanceTypeId" : "2e48e713-17f3-4c13-a9f8-23845bb210ac",
-    "instanceFormatId" : "309c3a3d-d54c-4519-b978-2c5c2de78d95",
+    "instanceFormatIds" : ["309c3a3d-d54c-4519-b978-2c5c2de78d95"],
     "physicalDescriptions" : [ "1 audio disc: digital; 4 3/4 in." ],
     "languages" : [ "und" ],
     "notes" : [ "Title from disc label.", "All compositions written by Omar Sosa and Seckou Keita, except tracks 6, 8 and 10 written by Omar Sosa.", "Produced by Steve Argüelles and Omar Sosa.", "Omar Sosa, grand piano, Fender Rhodes, sampler, microKorg, vocals ; Seckou Keita, kora, talking drum, djembe, sabar, vocals ; Wu Tong, sheng, bawu ; Mieko Miyazaki, koto ; Gustavo Ovalles, bata drums, culo'e puya, maracas, guataca, calabaza, clave ; E'Joung-Ju, geojungo ; Mosin Khan Kawa, nagadi ; Dominique Huchet, bird effects." ]
@@ -200,6 +205,7 @@
     "publication" : [ ],
     "urls" : [ ],
     "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
+    "instanceFormatIds" : [ ],
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -223,6 +229,7 @@
     "publication" : [ ],
     "urls" : [ ],
     "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
+    "instanceFormatIds": [ ],
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -252,6 +259,7 @@
     "publication" : [ ],
     "urls" : [ ],
     "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
+    "instanceFormatIds": [ ],
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
@@ -281,6 +289,7 @@
     "publication" : [ ],
     "urls" : [ ],
     "instanceTypeId" : "2b94c631-fca9-4892-a730-03ee529ffe2c",
+    "instanceFormatIds": [ ],
     "physicalDescriptions" : [ ],
     "languages" : [ ],
     "notes" : [ ]
