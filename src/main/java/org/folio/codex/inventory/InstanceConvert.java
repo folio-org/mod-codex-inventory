@@ -55,7 +55,7 @@ public class InstanceConvert {
     mapContributors(j, idMaps, instance);
     mapPublication(j, instance);
     mapInstanceTypeId(j, idMaps, instance);
-    mapInstanceFormatId(j, idMaps, instance);
+    mapInstanceFormatIds(j, idMaps, instance);
     mapIdentifiers(j, idMaps, instance);
     mapSource(instance, source);
     mapLanguages(j, instance);
@@ -105,9 +105,10 @@ public class InstanceConvert {
     }
   }
 
-  private static void mapInstanceFormatId(JsonObject j, IdMaps idMaps, Instance instance) {
-    final String id = j.getString("instanceFormatId");
-    if (id != null) {
+  private static void mapInstanceFormatIds(JsonObject j, IdMaps idMaps, Instance instance) {
+    JsonArray ar = j.getJsonArray("instanceFormatIds");
+    if (ar != null && ar.size() > 0) {
+      String id = ar.getString(0);
       final String format = idMaps.getInstanceFormatMap().get(id);
       if (format == null) {
         throw (new IllegalArgumentException("instanceFormatId " + id + " does not exist"));

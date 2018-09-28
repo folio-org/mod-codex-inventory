@@ -148,7 +148,7 @@ public class CodexInventoryTest {
     + "    } ],\n"
     + "    \"electronicAccess\" : [ ],\n"
     + "    \"instanceTypeId\" : \"2e48e713-17f3-4c13-a9f8-23845bb210ac\",\n"
-    + "    \"instanceFormatId\" : \"309c3a3d-d54c-4519-b978-2c5c2de78d95\",\n"
+    + "    \"instanceFormatIds\" : [ \"309c3a3d-d54c-4519-b978-2c5c2de78d95\" ],\n"
     + "    \"physicalDescriptions\" : [ \"1 audio disc: digital; 4 3/4 in.\" ],\n"
     + "    \"languages\" : [ \"und\" ],\n"
     + "    \"notes\" : [ \"Title from disc label.\", \"All compositions written by Omar Sosa and Seckou Keita, except tracks 6, 8 and 10 written by Omar Sosa.\", \"Produced by Steve Argüelles and Omar Sosa.\", \"Omar Sosa, grand piano, Fender Rhodes, sampler, microKorg, vocals ; Seckou Keita, kora, talking drum, djembe, sabar, vocals ; Wu Tong, sheng, bawu ; Mieko Miyazaki, koto ; Gustavo Ovalles, bata drums, culo'e puya, maracas, guataca, calabaza, clave ; E'Joung-Ju, geojungo ; Mosin Khan Kawa, nagadi ; Dominique Huchet, bird effects.\" ],\n"
@@ -850,18 +850,6 @@ public class CodexInventoryTest {
       .statusCode(500).extract().response();
     b = r.getBody().asString();
     context.assertTrue(b.contains("instanceTypeId missing"));
-
-    failInventory = "instanceFormatId=112233";
-    r = RestAssured.given()
-      .header(tenantHeader)
-      .header(urlHeader)
-      .get("/codex-instances?query=water")
-      .then()
-      .log().ifValidationFails()
-      .statusCode(500).extract().response();
-    b = r.getBody().asString();
-    context.assertTrue(b.contains("instanceFormatId "));
-    context.assertTrue(b.contains("does not exist"));
 
     failInventory = "instanceTypeId=112233";
     r = RestAssured.given()
