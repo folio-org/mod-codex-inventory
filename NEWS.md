@@ -1,4 +1,13 @@
-## 1.2.0 2018-09-06
+## 1.3.0 2018-10-11
+
+ * MODCXINV-36 Use locations 3.0 (or later)
+ * MODCXINV-35 Map repeatable instance formatId (was: simple text field)
+ * MODCXINV-34 Remove deprecated property `instance.urls` from test sample
+ * MODCXINV-33 Fix bad pageable
+ * MODCXINV-32 Adapt to Instance.edition being replaced with
+   Instance.editions in `instance-storage`
+
+## 1.2.0 2018-09-0
 
  * MODCXINV-31 Update to RAML 1.0
  * MODCXINV-28 Update resource type map with RDA content terms
