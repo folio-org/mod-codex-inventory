@@ -175,7 +175,7 @@ public class InstanceConvert {
   private static void mapAlternativeTitle(JsonObject j, Instance instance) {
     JsonArray ar = j.getJsonArray("alternativeTitles");
     if (ar != null && ar.size() > 0) {
-      instance.setAltTitle(ar.getString(0));
+      instance.setAltTitle(ar.getJsonObject(0).getString("alternativeTitle"));
     }
   }
 
