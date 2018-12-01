@@ -1,3 +1,7 @@
+## 1.4.0 2018-12-01
+ * MODCXINV-38 Adapt to new structure of alternativeTitles from Inventory
+ * MODCXINV-37 Use description fields in RAML JSON schema
+
 ## 1.3.0 2018-10-11
 
  * MODCXINV-36 Use locations 3.0 (or later)
