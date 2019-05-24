@@ -44,6 +44,10 @@
       ]
     }
   ],
+  "metadata": {
+    "containerMemory": "256",
+    "databaseConnection": "false"
+  },
   "permissionSets": [],
   "launchDescriptor": {
     "dockerImage": "${artifactId}:${version}",
