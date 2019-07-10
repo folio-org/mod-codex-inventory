@@ -30,7 +30,7 @@
     "instanceFormatIds": [ ],
     "physicalDescriptions" : [ "219 pages ; 20 cm." ],
     "languages" : [ "eng" ],
-    "notes" : [ "Bridget Jones finds herself unexpectedly pregnant at the eleventh hour. However, her joyful pregnancy is dominated by one crucial but awkward question --who is the father? Could it be honorable, decent, notable human rights lawyer, Mark Darcy? Or, is it charming, witty, and totally despicable, Daniel Cleaver?" ]
+    "notes" : [ ]
   }, {
     "id" : "f31a36de-fcf8-44f9-87ef-a55d06ad21ae",
     "source" : "Sample",
@@ -184,7 +184,7 @@
     "instanceFormatIds" : ["309c3a3d-d54c-4519-b978-2c5c2de78d95"],
     "physicalDescriptions" : [ "1 audio disc: digital; 4 3/4 in." ],
     "languages" : [ "und" ],
-    "notes" : [ "Title from disc label.", "All compositions written by Omar Sosa and Seckou Keita, except tracks 6, 8 and 10 written by Omar Sosa.", "Produced by Steve Argüelles and Omar Sosa.", "Omar Sosa, grand piano, Fender Rhodes, sampler, microKorg, vocals ; Seckou Keita, kora, talking drum, djembe, sabar, vocals ; Wu Tong, sheng, bawu ; Mieko Miyazaki, koto ; Gustavo Ovalles, bata drums, culo'e puya, maracas, guataca, calabaza, clave ; E'Joung-Ju, geojungo ; Mosin Khan Kawa, nagadi ; Dominique Huchet, bird effects." ]
+    "notes" : [ ]
   }, {
     "id" : "cf902bc7-299e-49c8-8d39-2f8d0927f97c",
     "source" : "Local: MODS",
