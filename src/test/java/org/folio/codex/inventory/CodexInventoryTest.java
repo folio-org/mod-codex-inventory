@@ -153,7 +153,7 @@ public class CodexInventoryTest {
     + "    \"instanceFormatIds\" : [ \"309c3a3d-d54c-4519-b978-2c5c2de78d95\" ],\n"
     + "    \"physicalDescriptions\" : [ \"1 audio disc: digital; 4 3/4 in.\" ],\n"
     + "    \"languages\" : [ \"und\" ],\n"
-    + "    \"notes\" : [ \"Title from disc label.\", \"All compositions written by Omar Sosa and Seckou Keita, except tracks 6, 8 and 10 written by Omar Sosa.\", \"Produced by Steve Argüelles and Omar Sosa.\", \"Omar Sosa, grand piano, Fender Rhodes, sampler, microKorg, vocals ; Seckou Keita, kora, talking drum, djembe, sabar, vocals ; Wu Tong, sheng, bawu ; Mieko Miyazaki, koto ; Gustavo Ovalles, bata drums, culo'e puya, maracas, guataca, calabaza, clave ; E'Joung-Ju, geojungo ; Mosin Khan Kawa, nagadi ; Dominique Huchet, bird effects.\" ],\n"
+    + "    \"notes\" : [ ],\n"
     + "    \"metadata\" : {\n"
     + "      \"createdDate\" : \"2018-02-02T03:40:46.084+0000\",\n"
     + "      \"createdByUserId\" : \"1ad737b0-d847-11e6-bf26-cec0c932ce01\",\n"
