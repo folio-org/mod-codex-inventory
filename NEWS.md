@@ -1,3 +1,9 @@
+## 1.5.0 2019-07-24
+
+ * Requires `instance-storage` interface 7.0 (MODCXINV-40)
+ * Adds initial module metadata (FOLIO-2003)
+ * Improves documentation (FOLIO-473)
+
 ## 1.4.0 2018-12-01
  * MODCXINV-38 Adapt to new structure of alternativeTitles from Inventory
  * MODCXINV-37 Use description fields in RAML JSON schema
