@@ -3,18 +3,10 @@ package org.folio.codex.inventory;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.folio.rest.RestVerticle;
-import org.folio.rest.jaxrs.model.Diagnostic;
-import org.folio.rest.jaxrs.model.Instance;
-import org.folio.rest.jaxrs.model.InstanceCollection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Header;
-import com.jayway.restassured.response.Response;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
@@ -29,12 +21,20 @@ import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Header;
+import com.jayway.restassured.response.Response;
+import org.folio.rest.RestVerticle;
+import org.folio.rest.jaxrs.model.Diagnostic;
+import org.folio.rest.jaxrs.model.Instance;
+import org.folio.rest.jaxrs.model.InstanceCollection;
+import org.folio.rest.jaxrs.model.ResultInfo;
 
 @RunWith(VertxUnitRunner.class)
 public class CodexInventoryTest {
 
   static {
-    System.setProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME, "io.vertx.core.logging.Log4jLogDelegateFactory");
+    System.setProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME, "io.vertx.core.logging.Log4j2LogDelegateFactory");
   }
 
   private final int portInventory = 9030;
@@ -184,6 +184,8 @@ public class CodexInventoryTest {
       }
       if (!"totalRecords".equals(failInventory)) {
         j.put("totalRecords", instances.size());
+        ResultInfo resultInfo = new ResultInfo().withTotalRecords(instances.size());
+        j.put("resultInfo", JsonObject.mapFrom(resultInfo));
       }
       if (failInventory != null && failInventory.matches("^[0-9]+")) {
         ctx.response().setStatusCode(Integer.parseInt(failInventory));
