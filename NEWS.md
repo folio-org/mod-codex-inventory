@@ -1,3 +1,7 @@
+## 1.6.0 2020-03-11
+
+* Upgrades to RAML Module Builder 29.3.0 (MODCXINV-44)
+
 ## 1.5.0 2019-07-24
 
  * Requires `instance-storage` interface 7.0 (MODCXINV-40)
