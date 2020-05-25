@@ -89,7 +89,7 @@ public class CodexInventoryTest {
 
     HttpServerOptions so = new HttpServerOptions().setHandle100ContinueAutomatically(true);
     vertx.createHttpServer(so)
-      .requestHandler(router::accept)
+      .requestHandler(router)
       .listen(
         portInventory,
         result -> {
