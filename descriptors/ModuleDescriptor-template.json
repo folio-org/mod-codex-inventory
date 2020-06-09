@@ -35,11 +35,13 @@
       "handlers": [
         {
           "methods": ["GET"],
-          "pathPattern": "/codex-instances"
+          "pathPattern": "/codex-instances",
+          "permissionsRequired": []
         },
         {
           "methods": ["GET"],
-          "pathPattern": "/codex-instances/{id}"
+          "pathPattern": "/codex-instances/{id}",
+          "permissionsRequired": []
         }
       ]
     }
