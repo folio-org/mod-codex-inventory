@@ -9,6 +9,14 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
 Codex Wrapper for Inventory
 
+## Decisions
+
+### No required permissions
+
+No permissions are required to access the endpoints. These would either require the codex multiplexer or downstream clients to know about the specific codex sources, which would introduce a subtle dependency.
+
+Instead this module relies on whether the eventual client has been granted the relevant inventory storage permissions..
+
 ## Additional information
 
 ### Other documentation
