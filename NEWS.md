@@ -1,3 +1,7 @@
+## 1.7.0 2020-06-12
+
+* Upgrades to RAML Module Builder 30.0.0 (MODCXINV-46)
+
 ## 1.6.0 2020-03-11
 
 * Upgrades to RAML Module Builder 29.3.0 (MODCXINV-44)
