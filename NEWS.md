@@ -1,3 +1,8 @@
+## 1.8.0 2020-10-07
+
+* Requires JDK 11 (MODCXINV-49)
+* Upgraded to RAML Module Builder 31.1.0 (MODCXINV-48)
+
 ## 1.7.0 2020-06-12
 
 * Upgrades to RAML Module Builder 30.0.0 (MODCXINV-46)
