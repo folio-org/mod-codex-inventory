@@ -1,13 +1,12 @@
 package org.folio.codex.inventory;
 
-import io.vertx.core.logging.Logger;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.folio.okapi.common.CQLUtil;
-import org.folio.okapi.common.OkapiLogger;
 import org.z3950.zing.cql.CQLAndNode;
 import org.z3950.zing.cql.CQLBooleanNode;
 import org.z3950.zing.cql.CQLNode;
@@ -28,10 +27,7 @@ import org.z3950.zing.cql.UnknownRelationModifierException;
 @java.lang.SuppressWarnings({"squid:S1192"})
 public class QueryConvert {
 
-  Logger logger = OkapiLogger.get();
-
-  class IndexDescriptor {
-
+  static class IndexDescriptor {
     final String name;
     final boolean filter;
 
