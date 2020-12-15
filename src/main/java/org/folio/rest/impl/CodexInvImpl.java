@@ -1,18 +1,21 @@
 package org.folio.rest.impl;
 
+import static io.vertx.core.MultiMap.caseInsensitiveMultiMap;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.folio.codex.inventory.InstanceConvert;
 import org.folio.codex.inventory.LHeaders;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.web.client.WebClient;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -34,34 +37,32 @@ import org.z3950.zing.cql.UnknownRelationException;
 import org.z3950.zing.cql.UnknownRelationModifierException;
 
 public class CodexInvImpl implements CodexInstances {
-
-  private class HttpError401 extends Throwable {
-
+  private static class HttpError401 extends Throwable {
     HttpError401() {
       super();
     }
   }
 
-  private class HttpError400 extends Throwable {
-
+  private static class HttpError400 extends Throwable {
     HttpError400() {
       super();
     }
   }
 
-  private static final Logger logger = LoggerFactory.getLogger("codex.inventory");
+  private static final Logger logger = LogManager.getLogger("codex.inventory");
 
-  private void getUrl(String url, HttpClient client,
+  private void getUrl(String url, WebClient client,
     LHeaders okapiHeaders, Handler<AsyncResult<Buffer>> fut) {
 
-    HttpClientRequest req = client.getAbs(url, res -> {
-      Buffer b = Buffer.buffer();
-      res.handler(b::appendBuffer);
-      logger.info("getUrl " + url + " returned " + res.statusCode());
-      res.endHandler(r -> {
+    client.getAbs(url)
+      .putHeader("Accept", "application/json")
+      .putHeaders(getRequestHeaders(okapiHeaders))
+      .send()
+      .onSuccess(res -> {
+        logger.info("getUrl " + url + " returned " + res.statusCode());
         client.close();
         if (res.statusCode() == 200) {
-          fut.handle(Future.succeededFuture(b));
+          fut.handle(Future.succeededFuture(res.body()));
         } else if (res.statusCode() == 404) {
           fut.handle(Future.succeededFuture(Buffer.buffer())); // empty buffer
         } else if (res.statusCode() == 401) {
@@ -71,20 +72,11 @@ public class CodexInvImpl implements CodexInstances {
         } else {
           fut.handle(Future.failedFuture("Get url " + url + " returned " + res.statusCode()));
         }
+      })
+      .onFailure(r -> {
+        client.close();
+        fut.handle(Future.failedFuture(r.getMessage()));
       });
-    });
-    req.setChunked(true);
-    for (Map.Entry<String, String> e : okapiHeaders.entrySet()) {
-      if (!e.getKey().equalsIgnoreCase(XOkapiHeaders.URL)) {
-        req.putHeader(e.getKey(), e.getValue());
-      }
-    }
-    req.putHeader("Accept", "application/json");
-    req.exceptionHandler(r -> {
-      client.close();
-      fut.handle(Future.failedFuture(r.getMessage()));
-    });
-    req.end();
   }
 
   static IdMaps idMaps = new IdMaps();
@@ -92,7 +84,7 @@ public class CodexInvImpl implements CodexInstances {
   private void getMap(Context vertxContext, LHeaders headers, Map<String, String> map,
     String path, String rootElement, Handler<AsyncResult<Void>> fut) {
 
-    HttpClient client = vertxContext.owner().createHttpClient();
+    WebClient client = createWebClient(vertxContext);
     int offset = map.size();
     int chunk = 10;
     final String url = headers.get(XOkapiHeaders.URL) + path
@@ -236,7 +228,7 @@ public class CodexInvImpl implements CodexInstances {
     Handler<AsyncResult<Void>> fut) {
 
     logger.info("getByQuery url=" + url);
-    HttpClient client = vertxContext.owner().createHttpClient();
+    WebClient client = createWebClient(vertxContext);
     getUrl(url, client, okapiHeaders, res -> {
       if (res.failed()) {
         logger.warn("getByQuery. getUrl failed " + res.cause());
@@ -266,7 +258,7 @@ public class CodexInvImpl implements CodexInstances {
   private void getById(String id, Context vertxContext, LHeaders okapiHeaders,
     Instance instance, Handler<AsyncResult<Void>> fut) {
 
-    HttpClient client = vertxContext.owner().createHttpClient();
+    WebClient client = createWebClient(vertxContext);
     final String url = okapiHeaders.get(XOkapiHeaders.URL) + "/instance-storage/instances/" + id;
     logger.info("getById url=" + url);
     getUrl(url, client, okapiHeaders, res -> {
@@ -386,5 +378,21 @@ public class CodexInvImpl implements CodexInstances {
         });
       }
     });
+  }
+
+  private WebClient createWebClient(Context vertxContext) {
+    return WebClient.create(vertxContext.owner());
+  }
+
+  private MultiMap getRequestHeaders(LHeaders headers) {
+    final MultiMap headersForRequest = caseInsensitiveMultiMap();
+
+    for (Map.Entry<String, String> e : headers.entrySet()) {
+      if (!e.getKey().equalsIgnoreCase(XOkapiHeaders.URL)) {
+        headersForRequest.add(e.getKey(), e.getValue());
+      }
+    }
+
+    return headersForRequest;
   }
 }
