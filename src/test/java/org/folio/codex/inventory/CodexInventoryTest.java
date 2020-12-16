@@ -3,6 +3,8 @@ package org.folio.codex.inventory;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,8 +16,6 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -32,14 +32,9 @@ import org.folio.rest.jaxrs.model.ResultInfo;
 
 @RunWith(VertxUnitRunner.class)
 public class CodexInventoryTest {
-
-  static {
-    System.setProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME, "io.vertx.core.logging.Log4j2LogDelegateFactory");
-  }
-
   private final int portInventory = 9030;
   private final int portCodex = 9031;
-  private final Logger logger = LoggerFactory.getLogger("codex.inventory");
+  private final Logger logger = LogManager.getLogger("codex.inventory");
   private String failMap; // for non-null value signals provoked failure
   private String failInventory; // for non-null value signals provoked failure
 
@@ -164,7 +159,6 @@ public class CodexInventoryTest {
   };
 
   private void handlerGetByQuery(RoutingContext ctx) {
-    final String query = ctx.request().getParam("query");
     ctx.request().endHandler(res -> {
       JsonArray instances = new JsonArray();
       JsonObject rec = new JsonObject(records[0]);

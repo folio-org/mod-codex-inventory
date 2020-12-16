@@ -1,13 +1,12 @@
 package org.folio.codex.inventory;
 
-import io.vertx.core.logging.Logger;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.folio.okapi.common.CQLUtil;
-import org.folio.okapi.common.OkapiLogger;
+
+import org.folio.okapi.common.CqlUtil;
 import org.z3950.zing.cql.CQLAndNode;
 import org.z3950.zing.cql.CQLBooleanNode;
 import org.z3950.zing.cql.CQLNode;
@@ -28,10 +27,7 @@ import org.z3950.zing.cql.UnknownRelationModifierException;
 @java.lang.SuppressWarnings({"squid:S1192"})
 public class QueryConvert {
 
-  Logger logger = OkapiLogger.get();
-
-  class IndexDescriptor {
-
+  static class IndexDescriptor {
     final String name;
     final boolean filter;
 
@@ -212,15 +208,15 @@ public class QueryConvert {
       -> n1.getIndex().equals(n2.getIndex()) ? 0 : -1;
 
     CQLTermNode source = new CQLTermNode("source", rel, "local");
-    if (!CQLUtil.eval(top, source, f1)) {
+    if (!CqlUtil.eval(top, source, f1)) {
       return null;
     }
-    CQLNode n2 = CQLUtil.reducer(top, source, f2);
+    CQLNode n2 = CqlUtil.reducer(top, source, f2);
     if (n2 == null) {
       throw new IllegalArgumentException("query has source clause only");
     }
     CQLTermNode extSelected = new CQLTermNode("ext.selected", rel, null);
-    n2 = CQLUtil.reducer(n2, extSelected, f2);
+    n2 = CqlUtil.reducer(n2, extSelected, f2);
     if (n2 == null) {
       throw new IllegalArgumentException("query has ext.selected clause only");
     }
