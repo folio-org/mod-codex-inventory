@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.folio</groupId>
   <artifactId>mod-codex-inventory</artifactId>
-  <version>1.9.0-SNAPSHOT</version>
+  <version>1.9.0</version>
   <packaging>jar</packaging>
 
   <licenses>
@@ -54,7 +54,7 @@
     <url>https://github.com/folio-org/mod-codex-inventory</url>
     <connection>scm:git:git://github.com/folio-org/mod-codex-inventory</connection>
     <developerConnection>scm:git:git@github.com:folio-org/mod-codex-inventory.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v1.9.0</tag>
   </scm>
 
   <dependencyManagement>
