@@ -1,3 +1,8 @@
+## 1.9.0 2021-03.15
+
+* Migrate to RMB 32 and vert.x 4.
+* Upgraded to RAML
+
 ## 1.8.0 2020-10-07
 
 * Requires JDK 11 (MODCXINV-49)
