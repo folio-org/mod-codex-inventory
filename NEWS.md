@@ -1,3 +1,9 @@
+## 1.9.0 2021-03-15
+
+* Migrate to vert.x 4.0.0 (MODCXINV-54)
+* Upgraded to RAML Module Builder 32.2.0 (MODCXINV-54)
+* Upgraded to OKAPI 4.3.0 (MODCXINV-54)
+
 ## 1.8.0 2020-10-07
 
 * Requires JDK 11 (MODCXINV-49)
