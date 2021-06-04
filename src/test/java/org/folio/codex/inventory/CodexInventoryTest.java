@@ -99,6 +99,7 @@ public class CodexInventoryTest {
   private final String[] records = {""
     + "  {\n"
     + "    \"id\" : \"" + ID1 + "\",\n"
+    + "    \"_version\" : 5,\n"
     + "    \"source\" : \"Sample\",\n"
     + "    \"title\" : \"Transparent water\",\n"
     + "    \"alternativeTitles\" : [ {\n"
