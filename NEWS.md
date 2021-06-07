@@ -1,7 +1,8 @@
 ## 2.0.0 IN PROGRESS
 
-* Upgrades to RAML-Module-Builder 33.0.0 (MODUSERBL-119)
-* Upgrades to Vert.x 4.1.0.CR1 (MODUSERBL-119)
+* embed_postgres command line option is no longer supported (MODCXINV-56)
+* Upgrades to RAML-Module-Builder 33.0.0 (MODCXINV-56)
+* Upgrades to Vert.x 4.1.0.CR1 (MODCXINV-56)
 
 ## 1.9.0 2021-03-15
 
@@ -92,4 +93,3 @@
    various types interfaces e.g. contributor-types 1.0.
  * This version has full record conversion.
  * No CQL queries are checked or re-written.
-
