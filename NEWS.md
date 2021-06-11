@@ -1,6 +1,6 @@
-## 2.0.0 IN PROGRESS
+## 2.0.0 2021-06-11
 
-* embed_postgres command line option is no longer supported (MODCXINV-56)
+* `embed_postgres` command line option is no longer supported (MODCXINV-56)
 * Upgrades to RAML-Module-Builder 33.0.0 (MODCXINV-56)
 * Upgrades to Vert.x 4.1.0.CR1 (MODCXINV-56)
 
