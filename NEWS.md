@@ -1,3 +1,7 @@
+## 2.1.0 2021-10-05
+
+* Requires `instance-storage 7.0 or 8.0`
+
 ## 2.0.0 2021-06-11
 
 * `embed_postgres` command line option is no longer supported (MODCXINV-56)
