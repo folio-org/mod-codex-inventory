@@ -1,3 +1,7 @@
+## 2.0.1 IN-PROGRESS
+
+* Update RMB to 33.0.4. (CVE-2021-44228) (MODCXINV-63)
+
 ## 2.0.0 2021-06-11
 
 * `embed_postgres` command line option is no longer supported (MODCXINV-56)
