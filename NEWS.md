@@ -1,4 +1,4 @@
-## 2.0.1 IN-PROGRESS
+## 2.0.1 2021-12-17
 
 * Update RMB to 33.0.4. (CVE-2021-44228) (MODCXINV-63)
 
