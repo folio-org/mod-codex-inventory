@@ -1,3 +1,7 @@
+## 2.2.0 IN-PROGRESS
+
+* Update RMB to 33.0.4. (CVE-2021-44228) (MODCXINV-61)
+
 ## 2.1.0 2021-10-05
 
 * Requires `instance-storage 7.0 or 8.0`
