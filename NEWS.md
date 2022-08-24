@@ -1,3 +1,7 @@
+## IN-PROGRESS
+
+* Requires `instance-storage` `9.0` ([MODCXINV-70](https://issues.folio.org/browse/MODCXINV-70))
+
 ## 2.3.0 2022-06-15
 
 * Upgrade to RMB to 34.0.0 ([MODCXINV-68](https://issues.folio.org/browse/MODCXINV-68))
