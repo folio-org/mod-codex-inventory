@@ -7,7 +7,7 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
 ## DEPRECATED
 
-This module is no longer used, and has not been updated since 2021.
+The Codex app was a proof of concept that has been superseded by other FOLIO development and requirements efforts. No additional development is planned and thus the app will no longer be supported.
 
 ## Prerequisites
 
