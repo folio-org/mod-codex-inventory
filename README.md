@@ -5,6 +5,10 @@ Copyright (C) 2017-2022 The Open Library Foundation
 This software is distributed under the terms of the Apache License,
 Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
+## DEPRECATED
+
+This module is no longer used, and has not been updated since 2021.
+
 ## Prerequisites
 
 * Java 11 JDK
